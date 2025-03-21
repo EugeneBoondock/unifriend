@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -17,7 +16,6 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -55,11 +53,14 @@ export function Navbar() {
         {/* Mobile logo and hamburger */}
         <div className="flex items-center justify-between md:hidden w-full">
           <Link href="/" className="flex items-center space-x-2">
-            <img
-              src="/uploads/unifriend.png"
-              alt="Unifriend Logo"
-              className="w-10 h-10 object-contain"
-            />
+            <div className="w-10 h-10 overflow-hidden flex items-center justify-center relative">
+              <img
+                src="/unifriend.png"
+                alt="Unifriend Logo"
+                className="w-10 h-10"
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
             <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
           </Link>
 
@@ -180,11 +181,14 @@ export function Navbar() {
         {/* Desktop logo */}
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="flex items-center space-x-2">
-            <img
-              src="/uploads/unifriend.png"
-              alt="Unifriend Logo"
-              className="w-10 h-10 object-contain"
-            />
+            <div className="w-10 h-10 overflow-hidden flex items-center justify-center relative">
+              <img
+                src="/unifriend.png"
+                alt="Unifriend Logo"
+                className="w-10 h-10"
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
             <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
           </Link>
         </div>
