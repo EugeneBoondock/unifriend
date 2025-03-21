@@ -56,7 +56,7 @@ export function Navbar() {
         <div className="flex items-center justify-between md:hidden w-full">
           <Link href="/" className="flex items-center space-x-2">
             <img
-              src="/images/unifriend.png"
+              src="/uploads/unifriend.png"
               alt="Unifriend Logo"
               className="w-10 h-10 object-contain"
             />
@@ -181,7 +181,7 @@ export function Navbar() {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="flex items-center space-x-2">
             <img
-              src="/images/unifriend.png"
+              src="/uploads/unifriend.png"
               alt="Unifriend Logo"
               className="w-10 h-10 object-contain"
             />
