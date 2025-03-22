@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-// Import SimpleLogo instead
-import { SimpleLogo } from "@/components/ui/SimpleLogo";
 
 import {
   NavigationMenu,
@@ -55,7 +53,10 @@ export function Navbar() {
         {/* Mobile logo and hamburger */}
         <div className="flex items-center justify-between md:hidden w-full">
           <Link href="/" className="flex items-center space-x-2">
-            <SimpleLogo />
+            {/* CSS-based logo */}
+            <div className="w-10 h-10 bg-[#513c64] rounded-full flex items-center justify-center text-white font-bold text-xl">
+              UF
+            </div>
             <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
           </Link>
 
@@ -176,7 +177,10 @@ export function Navbar() {
         {/* Desktop logo */}
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="flex items-center space-x-2">
-            <SimpleLogo />
+            {/* CSS-based logo */}
+            <div className="w-10 h-10 bg-[#513c64] rounded-full flex items-center justify-center text-white font-bold text-xl">
+              UF
+            </div>
             <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
           </Link>
         </div>

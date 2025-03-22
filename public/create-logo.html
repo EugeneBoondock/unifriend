@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Logo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #513c64;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #3a2a49;
+    }
+
+    .instructions {
+      margin-top: 20px;
+      max-width: 500px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create Unifriend Logo</h1>
+
+  <div class="logo-container">
+    <canvas id="logoCanvas" width="200" height="200"></canvas>
+    <a id="downloadLink" download="unifriend-logo.png" href="#">Download Logo</a>
+  </div>
+
+  <button id="generateBtn">Generate Logo</button>
+
+  <div class="instructions">
+    <p>This tool creates a simple Unifriend logo. Click "Generate Logo" to create the logo, then "Download Logo" to save it to your device.</p>
+    <p>After downloading, place the image in the public folder of your Next.js project.</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('logoCanvas');
+    const ctx = canvas.getContext('2d');
+    const downloadLink = document.getElementById('downloadLink');
+    const generateBtn = document.getElementById('generateBtn');
+
+    function drawLogo() {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw circle
+      ctx.beginPath();
+      ctx.arc(100, 100, 100, 0, Math.PI * 2);
+      ctx.fillStyle = '#513c64';
+      ctx.fill();
+
+      // Draw text
+      ctx.font = 'bold 80px Arial';
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('UF', 100, 100);
+
+      // Update download link
+      downloadLink.href = canvas.toDataURL('image/png');
+    }
+
+    // Generate logo on button click
+    generateBtn.addEventListener('click', drawLogo);
+
+    // Generate logo initially
+    drawLogo();
+  </script>
+</body>
+</html>
