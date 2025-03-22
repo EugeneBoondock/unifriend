@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -47,21 +48,24 @@ export function Navbar() {
     { name: "UniVendors", path: "/uni-vendors", isNew: true, isEmerald: true, description: "Student-owned businesses and services." },
   ];
 
+  // Use simple text for logo as fallback
+  const LogoComponent = () => (
+    <div className="flex items-center space-x-2">
+      {/* Logo with fallback to text */}
+      <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xl">
+        UF
+      </div>
+      <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
+    </div>
+  );
+
   return (
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-purple-900/40">
       <div className="container flex h-16 items-center">
         {/* Mobile logo and hamburger */}
         <div className="flex items-center justify-between md:hidden w-full">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 overflow-hidden flex items-center justify-center relative">
-              <img
-                src="/unifriend.png"
-                alt="Unifriend Logo"
-                className="w-10 h-10"
-                style={{ objectFit: 'contain' }}
-              />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
+            <LogoComponent />
           </Link>
 
           <div className="flex items-center gap-2">
@@ -181,15 +185,7 @@ export function Navbar() {
         {/* Desktop logo */}
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 overflow-hidden flex items-center justify-center relative">
-              <img
-                src="/unifriend.png"
-                alt="Unifriend Logo"
-                className="w-10 h-10"
-                style={{ objectFit: 'contain' }}
-              />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
+            <LogoComponent />
           </Link>
         </div>
 

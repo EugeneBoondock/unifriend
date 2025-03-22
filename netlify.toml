@@ -8,3 +8,15 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[headers]]
+  for = "/unifriend.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+    Content-Type = "image/png"
+
+# Allow direct access to static assets
+[[headers]]
+  for = "/*.(jpg|jpeg|png|gif|ico|svg|webp)"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
