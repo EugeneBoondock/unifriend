@@ -119,7 +119,7 @@ export default function Home() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-white text-purple-700 hover:bg-gray-100 dark:bg-white/90 dark:hover:bg-white">
-                <Link href="/join-community">Join Community</Link>
+                <Link href="/signup">Join Community</Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="border-white text-white hover:bg-white/10">
                 <Link href="/forum">Explore Forum</Link>
