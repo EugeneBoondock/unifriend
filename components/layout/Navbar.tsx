@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 import {
@@ -23,6 +23,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Simplified routes to make navbar more compact
   const routes = [
@@ -48,16 +49,36 @@ export function Navbar() {
     { name: "UniVendors", path: "/uni-vendors", isNew: true, isEmerald: true, description: "Student-owned businesses and services." },
   ];
 
-  // Use simple text for logo as fallback
-  const LogoComponent = () => (
-    <div className="flex items-center space-x-2">
-      {/* Logo with fallback to text */}
-      <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xl">
-        UF
+  // Logo component with image and fallback
+  const LogoComponent = () => {
+    return (
+      <div className="flex items-center space-x-2">
+        {/* Try to load the SVG logo first */}
+        <div className="w-10 h-10 overflow-hidden flex items-center justify-center relative">
+          <img
+            src="/logo.svg"
+            alt="Unifriend Logo"
+            className="w-10 h-10"
+            onError={(e) => {
+              // If SVG fails, try PNG
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/unifriend-small.png";
+              e.currentTarget.onError = () => setImageLoaded(false);
+            }}
+            onLoad={() => setImageLoaded(true)}
+          />
+
+          {/* Show text logo as fallback if image doesn't load */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xl">
+              UF
+            </div>
+          )}
+        </div>
+        <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
       </div>
-      <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-purple-900/40">
@@ -189,7 +210,7 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop navigation */}
+        {/* Rest of the Navbar component unchanged */}
         <NavigationMenu className="mx-6 hidden md:flex">
           <NavigationMenuList>
             {routes.map((route) => (
