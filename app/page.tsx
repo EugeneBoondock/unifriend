@@ -128,11 +128,14 @@ export default function Home() {
           </div>
           <div className="flex justify-center">
             <div className="w-full max-w-md bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
-              <div className="aspect-[9/16] bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
+              <div className="aspect-[9/16] bg-white/20 rounded-lg flex items-center justify-center overflow-hidden border border-white/30">
                 <img
                   src="/students-group.jpg"
                   alt="Group of South African university students"
                   className="w-full h-full object-cover"
+                  loading="eager"
+                  width={400}
+                  height={711}
                 />
               </div>
               <p className="mt-4 text-center text-sm text-white/80">

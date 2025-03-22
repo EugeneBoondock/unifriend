@@ -54,7 +54,7 @@ export function Navbar() {
         <div className="flex items-center justify-between md:hidden w-full">
           <Link href="/" className="flex items-center space-x-2">
             {/* CSS-based logo */}
-            <div className="w-10 h-10 bg-[#513c64] rounded-full flex items-center justify-center text-white font-bold text-xl">
+            <div className="min-w-[40px] h-10 w-10 bg-purple-700 dark:bg-purple-600 rounded-full flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
               UF
             </div>
             <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
@@ -178,7 +178,7 @@ export function Navbar() {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="flex items-center space-x-2">
             {/* CSS-based logo */}
-            <div className="w-10 h-10 bg-[#513c64] rounded-full flex items-center justify-center text-white font-bold text-xl">
+            <div className="min-w-[40px] h-10 w-10 bg-purple-700 dark:bg-purple-600 rounded-full flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
               UF
             </div>
             <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
