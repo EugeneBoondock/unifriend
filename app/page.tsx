@@ -128,8 +128,12 @@ export default function Home() {
           </div>
           <div className="flex justify-center">
             <div className="w-full max-w-md bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
-              <div className="aspect-[9/16] bg-white/5 rounded-lg flex items-center justify-center">
-                <span className="text-5xl">📱</span>
+              <div className="aspect-[9/16] bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
+                <img
+                  src="/students.jpg"
+                  alt="South African university students on campus"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <p className="mt-4 text-center text-sm text-white/80">
                 Overcome Every Student Challenge
