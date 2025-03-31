@@ -46,6 +46,19 @@ export default function TestPage() {
             priority
           />
         </div>
+
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Test 3: Regular img tag</h2>
+          <Image
+            src="/images/unifriend.png"
+            alt="Unifriend Logo Test 3"
+            width={200}
+            height={100}
+            className="h-auto w-auto"
+            priority
+            quality={100}
+          />
+        </div>
       </div>
     </div>
   );
