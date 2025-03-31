@@ -21,17 +21,15 @@ export default function ClientBody({
   }
 
   return (
-    <body>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <div className="min-h-screen pattern-container">
-          {children}
-        </div>
-      </ThemeProvider>
-    </body>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <div className="min-h-screen pattern-container">
+        {children}
+      </div>
+    </ThemeProvider>
   );
 }

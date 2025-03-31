@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientBody from "./ClientBody";
-import { PageLayout } from "@/components/layout/PageLayout";
+import { PageLayout } from "../components/layout/PageLayout";
 import { AuthProvider } from "./providers/AuthProvider";
 
 const geistSans = Geist({
@@ -28,13 +28,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
-      <ClientBody>
-        <AuthProvider>
-          <PageLayout>
-            {children}
-          </PageLayout>
-        </AuthProvider>
-      </ClientBody>
+      <body>
+        <ClientBody>
+          <AuthProvider>
+            <PageLayout>
+              {children}
+            </PageLayout>
+          </AuthProvider>
+        </ClientBody>
+      </body>
     </html>
   );
 }

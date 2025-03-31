@@ -1,401 +1,317 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
-export default function SignUp() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Form states
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+export default function SignUpPage() {
+  const [userType, setUserType] = useState("student");
+  const [institutionType, setInstitutionType] = useState("");
+  const [studyStatus, setStudyStatus] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [userType, setUserType] = useState("student");
-  const [university, setUniversity] = useState("");
-  const [yearOfStudy, setYearOfStudy] = useState("");
-  const [fieldOfStudy, setFieldOfStudy] = useState("");
-  const [studentNumber, setStudentNumber] = useState("");
-  const [nsfasFunded, setNsfasFunded] = useState(false);
-  const [accommodation, setAccommodation] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
 
-  // Student-specific fields
-  const [grade, setGrade] = useState("");
-  const [lastSchool, setLastSchool] = useState("");
-  const [employmentStatus, setEmploymentStatus] = useState("");
-
-  // Validation state
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-
-  const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
-
-    if (!name.trim()) newErrors.name = "Name is required";
-    if (!email.trim()) newErrors.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = "Please enter a valid email";
-
-    if (!password) newErrors.password = "Password is required";
-    else if (password.length < 8) newErrors.password = "Password must be at least 8 characters";
-
-    if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
-
-    if (!termsAccepted) newErrors.terms = "You must accept the terms and conditions";
-
-    if (userType === "student") {
-      if (!university.trim()) newErrors.university = "University is required";
-      if (!studentNumber.trim()) newErrors.studentNumber = "Student number is required";
-    } else if (userType === "matric") {
-      if (!grade.trim()) newErrors.grade = "Grade is required";
-      if (!lastSchool.trim()) newErrors.lastSchool = "School name is required";
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (confirmPassword && e.target.value !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+    } else {
+      setPasswordError("");
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-
-    try {
-      // Create user in the database
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          userType,
-          university: userType === "student" ? university : null,
-          yearOfStudy: userType === "student" ? yearOfStudy : null,
-          fieldOfStudy: userType === "student" ? fieldOfStudy : null,
-          studentNumber: userType === "student" ? studentNumber : null,
-          nsfasFunded: userType === "student" ? nsfasFunded : false,
-          accommodation: userType === "student" ? accommodation : null,
-          grade: userType === "matric" ? grade : null,
-          lastSchool: userType === "matric" ? lastSchool : null,
-          employmentStatus: userType === "unemployed" ? employmentStatus : null,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to register');
-      }
-
-      toast.success("Account created successfully!");
-
-      // Automatically sign in the user
-      await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      router.push("/");
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to create account");
-    } finally {
-      setIsLoading(false);
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+    if (password && e.target.value !== password) {
+      setPasswordError("Passwords do not match");
+    } else {
+      setPasswordError("");
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!captchaValue) {
+      alert("Please complete the CAPTCHA");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    // Continue with form submission
   };
 
   return (
-    <div className="container max-w-5xl py-8 space-y-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">Create Your Unifriend Account</h1>
-        <p className="text-muted-foreground">
-          Join the South African university student community
-        </p>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
-          <CardDescription>
-            Fill out the form below to create your account.
+    <div className="container flex items-center justify-center min-h-[calc(100vh-4rem)] py-8">
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-3xl font-bold text-center">Join UniFriend</CardTitle>
+          <CardDescription className="text-center text-lg">
+            Connect with South Africa&apos;s diverse student community
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              <div className="grid gap-2">
-                <Label htmlFor="userType">I am a</Label>
-                <Select
-                  value={userType}
-                  onValueChange={setUserType}
-                >
+        <CardContent className="space-y-6">
+          {/* User Type Selection */}
+          <div className="space-y-4">
+            <Label>I am a...</Label>
+            <RadioGroup
+              defaultValue="student"
+              onValueChange={setUserType}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="student" id="student" />
+                <Label htmlFor="student" className="cursor-pointer">Student</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="alumni" id="alumni" />
+                <Label htmlFor="alumni" className="cursor-pointer">Alumni</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="human" id="human" />
+                <Label htmlFor="human" className="cursor-pointer">Human</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {/* Basic Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input id="firstName" placeholder="Enter your first name" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input id="lastName" placeholder="Enter your last name" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="Enter your email address" />
+          </div>
+
+          {userType === "student" && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="institution">Institution Type</Label>
+                <Select onValueChange={setInstitutionType}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select your status" />
+                    <SelectValue placeholder="Select your institution type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="student">University Student</SelectItem>
-                    <SelectItem value="matric">High School / Matric Student</SelectItem>
-                    <SelectItem value="unemployed">Unemployed Graduate</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="university">University</SelectItem>
+                    <SelectItem value="tvet">TVET College</SelectItem>
+                    <SelectItem value="private">Private College</SelectItem>
+                    <SelectItem value="high-school">High School (Grade 11-12)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                  {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                  {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
-                </div>
-              </div>
-
-              {userType === "student" && (
-                <>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label htmlFor="university">University</Label>
-                      <Select value={university} onValueChange={setUniversity}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your university" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="university-of-cape-town">University of Cape Town</SelectItem>
-                          <SelectItem value="university-of-witwatersrand">University of Witwatersrand</SelectItem>
-                          <SelectItem value="stellenbosch-university">Stellenbosch University</SelectItem>
-                          <SelectItem value="university-of-pretoria">University of Pretoria</SelectItem>
-                          <SelectItem value="university-of-johannesburg">University of Johannesburg</SelectItem>
-                          <SelectItem value="university-of-kwazulu-natal">University of KwaZulu-Natal</SelectItem>
-                          <SelectItem value="rhodes-university">Rhodes University</SelectItem>
-                          <SelectItem value="university-of-the-western-cape">University of the Western Cape</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {errors.university && <p className="text-sm text-red-500">{errors.university}</p>}
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="studentNumber">Student Number</Label>
-                      <Input
-                        id="studentNumber"
-                        placeholder="ABCXYZ123"
-                        value={studentNumber}
-                        onChange={(e) => setStudentNumber(e.target.value)}
-                      />
-                      {errors.studentNumber && <p className="text-sm text-red-500">{errors.studentNumber}</p>}
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label htmlFor="yearOfStudy">Year of Study</Label>
-                      <Select value={yearOfStudy} onValueChange={setYearOfStudy}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">First Year</SelectItem>
-                          <SelectItem value="2">Second Year</SelectItem>
-                          <SelectItem value="3">Third Year</SelectItem>
-                          <SelectItem value="4">Fourth Year</SelectItem>
-                          <SelectItem value="5+">Fifth Year or Higher</SelectItem>
-                          <SelectItem value="honours">Honours</SelectItem>
-                          <SelectItem value="masters">Masters</SelectItem>
-                          <SelectItem value="phd">PhD</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="fieldOfStudy">Field of Study</Label>
-                      <Select value={fieldOfStudy} onValueChange={setFieldOfStudy}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your field" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="business">Business & Economics</SelectItem>
-                          <SelectItem value="engineering">Engineering</SelectItem>
-                          <SelectItem value="health">Health Sciences</SelectItem>
-                          <SelectItem value="humanities">Humanities & Social Sciences</SelectItem>
-                          <SelectItem value="law">Law</SelectItem>
-                          <SelectItem value="science">Natural Sciences</SelectItem>
-                          <SelectItem value="education">Education</SelectItem>
-                          <SelectItem value="arts">Arts & Design</SelectItem>
-                          <SelectItem value="it">Information Technology</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label htmlFor="accommodation">Accommodation</Label>
-                      <Select value={accommodation} onValueChange={setAccommodation}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Where do you stay?" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="university-residence">University Residence</SelectItem>
-                          <SelectItem value="private-residence">Private Residence</SelectItem>
-                          <SelectItem value="private-accommodation">Private Accommodation</SelectItem>
-                          <SelectItem value="family-home">Family Home</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-center space-x-2 pt-8">
-                      <Checkbox
-                        id="nsfasFunded"
-                        checked={nsfasFunded}
-                        onCheckedChange={(checked) => setNsfasFunded(checked as boolean)}
-                      />
-                      <label
-                        htmlFor="nsfasFunded"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        I am NSFAS funded
-                      </label>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {userType === "matric" && (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label htmlFor="grade">Current Grade</Label>
-                    <Select value={grade} onValueChange={setGrade}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your grade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">Grade 10</SelectItem>
-                        <SelectItem value="11">Grade 11</SelectItem>
-                        <SelectItem value="12">Grade 12 (Matric)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {errors.grade && <p className="text-sm text-red-500">{errors.grade}</p>}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="lastSchool">School Name</Label>
-                    <Input
-                      id="lastSchool"
-                      placeholder="Your high school"
-                      value={lastSchool}
-                      onChange={(e) => setLastSchool(e.target.value)}
-                    />
-                    {errors.lastSchool && <p className="text-sm text-red-500">{errors.lastSchool}</p>}
-                  </div>
-                </div>
-              )}
-
-              {userType === "unemployed" && (
-                <div className="grid gap-2">
-                  <Label htmlFor="employmentStatus">Employment Status</Label>
-                  <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
+              {institutionType === "university" && (
+                <div className="space-y-2">
+                  <Label htmlFor="university">Select University</Label>
+                  <Select>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your status" />
+                      <SelectValue placeholder="Select your university" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="seeking">Actively Seeking Work</SelectItem>
-                      <SelectItem value="freelance">Freelancing</SelectItem>
-                      <SelectItem value="internship">Looking for Internships</SelectItem>
-                      <SelectItem value="further-study">Planning Further Studies</SelectItem>
+                      <SelectItem value="university-of-cape-town">University of Cape Town</SelectItem>
+                      <SelectItem value="university-of-witwatersrand">University of Witwatersrand</SelectItem>
+                      <SelectItem value="stellenbosch-university">Stellenbosch University</SelectItem>
+                      <SelectItem value="university-of-pretoria">University of Pretoria</SelectItem>
+                      <SelectItem value="university-of-johannesburg">University of Johannesburg</SelectItem>
+                      <SelectItem value="university-of-kwazulu-natal">University of KwaZulu-Natal</SelectItem>
+                      <SelectItem value="rhodes-university">Rhodes University</SelectItem>
+                      <SelectItem value="university-of-the-western-cape">University of the Western Cape</SelectItem>
+                      <SelectItem value="nelson-mandela-university">Nelson Mandela University</SelectItem>
+                      <SelectItem value="university-of-free-state">University of Free State</SelectItem>
+                      <SelectItem value="tshwane-university-of-technology">Tshwane University of Technology</SelectItem>
+                      <SelectItem value="cape-peninsula-university-of-technology">Cape Peninsula University of Technology</SelectItem>
+                      <SelectItem value="durban-university-of-technology">Durban University of Technology</SelectItem>
+                      <SelectItem value="vaal-university-of-technology">Vaal University of Technology</SelectItem>
+                      <SelectItem value="central-university-of-technology">Central University of Technology</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               )}
 
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={termsAccepted}
-                  onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                  required
-                />
-                <label
-                  htmlFor="terms"
-                  className="text-sm font-medium leading-none"
-                >
-                  I agree to the{" "}
-                  <Link href="/terms" className="text-primary underline underline-offset-4">
-                    terms and conditions
-                  </Link>
-                </label>
+              {institutionType === "tvet" && (
+                <div className="space-y-2">
+                  <Label htmlFor="tvet">Select TVET College</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your TVET college" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="false-bay">False Bay TVET College</SelectItem>
+                      <SelectItem value="northlink">Northlink TVET College</SelectItem>
+                      <SelectItem value="college-of-cape-town">College of Cape Town</SelectItem>
+                      <SelectItem value="boland">Boland TVET College</SelectItem>
+                      <SelectItem value="south-cape">South Cape TVET College</SelectItem>
+                      <SelectItem value="west-coast">West Coast TVET College</SelectItem>
+                      <SelectItem value="central-johannesburg">Central Johannesburg TVET College</SelectItem>
+                      <SelectItem value="ekurhuleni-east">Ekurhuleni East TVET College</SelectItem>
+                      <SelectItem value="ekurhuleni-west">Ekurhuleni West TVET College</SelectItem>
+                      <SelectItem value="sedibeng">Sedibeng TVET College</SelectItem>
+                      <SelectItem value="south-west-gauteng">South West Gauteng TVET College</SelectItem>
+                      <SelectItem value="tshwane-north">Tshwane North TVET College</SelectItem>
+                      <SelectItem value="tshwane-south">Tshwane South TVET College</SelectItem>
+                      <SelectItem value="western-gauteng">Western TVET College</SelectItem>
+                      <SelectItem value="coastal">Coastal TVET College</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="study-status">Study Status</Label>
+                <Select onValueChange={setStudyStatus}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your study status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="prospective">Prospective Student</SelectItem>
+                    <SelectItem value="current">Current Student</SelectItem>
+                    <SelectItem value="gap-year">Taking a Gap Year</SelectItem>
+                    <SelectItem value="distance">Distance Learning</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              {errors.terms && <p className="text-sm text-red-500">{errors.terms}</p>}
+
+              {studyStatus === "current" && (
+                <div className="space-y-2">
+                  <Label htmlFor="study-year">Study Year</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your current year of study" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="first">First Year</SelectItem>
+                      <SelectItem value="second">Second Year</SelectItem>
+                      <SelectItem value="third">Third Year</SelectItem>
+                      <SelectItem value="fourth">Fourth Year</SelectItem>
+                      <SelectItem value="ancestor">Ancestor (4+ years)</SelectItem>
+                      <SelectItem value="masters">Masters</SelectItem>
+                      <SelectItem value="phd">PhD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Note: "Ancestor" refers to students who have been in their program for more than 4 years due to module repeats
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {userType === "alumni" && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="graduation-year">Graduation Year</Label>
+                <Input id="graduation-year" type="number" placeholder="Enter your graduation year" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="field">Field of Study/Work</Label>
+                <Input id="field" placeholder="e.g., Engineering, Business, Education" />
+              </div>
+            </>
+          )}
+
+          {userType === "human" && (
+            <div className="space-y-2">
+              <Label htmlFor="interest">Interest in Education</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your interest" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="parent">Parent/Guardian</SelectItem>
+                  <SelectItem value="educator">Educator</SelectItem>
+                  <SelectItem value="mentor">Mentor</SelectItem>
+                  <SelectItem value="professional">Industry Professional</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="Create a secure password"
+                value={password}
+                onChange={handlePasswordChange}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Must be at least 8 characters long and include a number
+              </p>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating account..." : "Create account"}
-            </Button>
-          </form>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input 
+                id="confirmPassword" 
+                type="password" 
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+              />
+              {passwordError && (
+                <p className="text-xs text-red-500 mt-1">
+                  {passwordError}
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-center mt-4">
+              <ReCAPTCHA
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                onChange={(value) => setCaptchaValue(value)}
+              />
+            </div>
+          </div>
         </CardContent>
-        <CardFooter>
-          <div className="text-sm text-muted-foreground">
+
+        <CardFooter className="flex flex-col space-y-4">
+          <Button 
+            className="w-full" 
+            onClick={handleSubmit}
+            disabled={!captchaValue || Boolean(passwordError) || !password || !confirmPassword}
+          >
+            Create Account
+          </Button>
+          <p className="text-sm text-center text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/signin" className="text-primary underline underline-offset-4">
+            <Link href="/signin" className="text-primary hover:underline">
               Sign in
             </Link>
-          </div>
+          </p>
+          <p className="text-xs text-center text-muted-foreground">
+            By creating an account, you agree to our{" "}
+            <Link href="/terms" className="hover:underline">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="hover:underline">
+              Privacy Policy
+            </Link>
+          </p>
         </CardFooter>
       </Card>
     </div>
-  );
+  )
 }

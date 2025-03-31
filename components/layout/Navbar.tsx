@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { useState } from "react";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "../ui/sheet";
+import { Menu } from "lucide-react";
 
 import {
   NavigationMenu,
@@ -14,10 +17,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+} from "../ui/navigation-menu";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -25,7 +25,6 @@ export function Navbar() {
 
   // Simplified routes to make navbar more compact
   const routes = [
-    { name: "Home", path: "/" },
     { name: "Forum", path: "/forum" },
     { name: "Resources", path: "/resources", dropdown: true },
     { name: "Community", path: "/community", dropdown: true },
@@ -48,21 +47,19 @@ export function Navbar() {
   ];
 
   return (
-    <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-purple-900/40">
+    <div className="sticky top-0 z-50 w-full border-b bg-gradient-to-b from-background/95 to-background/95 dark:border-purple-900/40">
       <div className="container flex h-16 items-center">
         {/* Mobile logo and hamburger */}
         <div className="flex items-center justify-between md:hidden w-full">
-          <Link href="/" className="flex items-center space-x-2">
-            {/* CSS-based logo */}
-            <div className="min-w-[40px] h-10 w-10 bg-purple-700 dark:bg-purple-600 rounded-full flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
-              UF
-            </div>
-            <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
+          <Link href="/" className="flex items-center transition-all duration-200 hover:scale-105">
+            <img
+              src="/images/unifriend.png"
+              alt="Unifriend Logo"
+              className="h-10 w-auto rounded-lg transition-all duration-200 hover:shadow-[0_0_0_2px_rgba(147,51,234,0.5)] dark:hover:shadow-[0_0_0_2px_rgba(168,85,247,0.5)]"
+            />
           </Link>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
-
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
@@ -85,6 +82,7 @@ export function Navbar() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[80%] sm:w-[350px]">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <div className="flex flex-col gap-4 py-4">
                   {routes.map((route) => (
                     <Link
@@ -135,7 +133,7 @@ export function Navbar() {
                             {item.isNew && (
                               <div className={cn(
                                 "ml-1 rounded-full px-1.5 py-0.5 text-xs font-medium",
-                                item.isEmerald ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300"
+                                item.isEmerald ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300"
                               )}>
                                 New
                               </div>
@@ -176,12 +174,12 @@ export function Navbar() {
 
         {/* Desktop logo */}
         <div className="mr-4 hidden md:flex">
-          <Link href="/" className="flex items-center space-x-2">
-            {/* CSS-based logo */}
-            <div className="min-w-[40px] h-10 w-10 bg-purple-700 dark:bg-purple-600 rounded-full flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
-              UF
-            </div>
-            <span className="text-xl font-bold tracking-tight text-primary">Unifriend</span>
+          <Link href="/" className="flex items-center transition-all duration-200 hover:scale-105">
+            <img
+              src="/images/unifriend.png"
+              alt="Unifriend Logo"
+              className="h-12 md:h-14 w-auto rounded-lg transition-all duration-200 hover:shadow-[0_0_0_2px_rgba(147,51,234,0.5)] dark:hover:shadow-[0_0_0_2px_rgba(168,85,247,0.5)]"
+            />
           </Link>
         </div>
 
@@ -234,7 +232,7 @@ export function Navbar() {
                                     {item.isNew && (
                                       <div className={cn(
                                         "ml-1 rounded-full px-1.5 py-0.5 text-xs font-medium",
-                                        item.isEmerald ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300"
+                                        item.isEmerald ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300"
                                       )}>
                                         New
                                       </div>
@@ -268,21 +266,16 @@ export function Navbar() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Desktop sign in/up buttons and theme toggle */}
-        <div className="hidden md:flex flex-1 items-center justify-end space-x-4">
-          <ThemeToggle />
-          <nav className="flex items-center space-x-2">
-            <Link href="/signin">
-              <Button variant="outline" size="sm">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm">
-                Sign Up
-              </Button>
-            </Link>
-          </nav>
+        {/* Desktop right section */}
+        <div className="hidden md:flex items-center space-x-4 ml-auto">
+          <Link href="/signin">
+            <Button variant="outline" size="sm">
+              Sign In
+            </Button>
+          </Link>
+          <Link href="/signup">
+            <Button size="sm">Get Started</Button>
+          </Link>
         </div>
       </div>
     </div>
