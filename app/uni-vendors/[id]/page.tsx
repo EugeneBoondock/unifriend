@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -90,9 +91,12 @@ const VENDOR = {
   policy: "All books can be returned within 7 days if you find they don't match your course requirements. No returns for highlighting or normal wear."
 }
 
-// For Next.js 15, we need to define the component as a regular function
-const VendorDetailPage = ({ params }: { params: { id: string } }) => {
-  const vendor = VENDOR; // In a real app, you would fetch the vendor by params.id
+interface Props {
+  params: { id: string };
+}
+
+export default function VendorDetailPage({ params }: Props) {
+  const vendor = VENDOR;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -296,6 +300,3 @@ const VendorDetailPage = ({ params }: { params: { id: string } }) => {
     </div>
   );
 }
-
-// Export the component with proper Next.js typing
-export default VendorDetailPage;

@@ -34,13 +34,16 @@ export default function TestPage() {
           />
         </div>
 
-        {/* Test as regular img */}
+        {/* Test with dimensions and auto height */}
         <div>
-          <h2 className="text-xl mb-2">Test 3: Regular img tag</h2>
-          <img 
+          <h2 className="text-xl mb-2">Test 3: Image with auto height</h2>
+          <Image
             src="/images/unifriend.png"
             alt="Unifriend Logo Test 3"
-            style={{ width: '200px', height: 'auto' }}
+            width={200}
+            height={100}
+            style={{ height: 'auto' }}
+            priority
           />
         </div>
       </div>

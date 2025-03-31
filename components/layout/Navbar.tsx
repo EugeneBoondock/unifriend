@@ -52,10 +52,15 @@ export function Navbar() {
         {/* Mobile logo and hamburger */}
         <div className="flex items-center justify-between md:hidden w-full">
           <Link href="/" className="flex items-center transition-all duration-200 hover:scale-105">
-            <img
+            <Image
               src="/images/unifriend.png"
               alt="Unifriend Logo"
+              width={80}
+              height={80}
               className="h-10 w-auto rounded-lg transition-all duration-200 hover:shadow-[0_0_0_2px_rgba(147,51,234,0.5)] dark:hover:shadow-[0_0_0_2px_rgba(168,85,247,0.5)]"
+              priority
+              quality={100}
+              style={{ objectFit: 'contain' }}
             />
           </Link>
 
@@ -175,10 +180,15 @@ export function Navbar() {
         {/* Desktop logo */}
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="flex items-center transition-all duration-200 hover:scale-105">
-            <img
+            <Image
               src="/images/unifriend.png"
               alt="Unifriend Logo"
-              className="h-12 md:h-14 w-auto rounded-lg transition-all duration-200 hover:shadow-[0_0_0_2px_rgba(147,51,234,0.5)] dark:hover:shadow-[0_0_0_2px_rgba(168,85,247,0.5)]"
+              width={96}
+              height={96}
+              className="h-12 w-auto rounded-lg transition-all duration-200 hover:shadow-[0_0_0_2px_rgba(147,51,234,0.5)] dark:hover:shadow-[0_0_0_2px_rgba(168,85,247,0.5)]"
+              priority
+              quality={100}
+              style={{ objectFit: 'contain' }}
             />
           </Link>
         </div>
