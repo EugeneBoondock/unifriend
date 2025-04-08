@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { ReactNode } from "react";
-import { usePathname } from "next/navigation";
-import { Navbar } from "./Navbar";
-import { Footer } from "./Footer";
+import React from 'react';
+import { MainNav } from './MainNav';
+import { Footer } from './Footer';
 
-export function PageLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+interface PageLayoutProps {
+  children: React.ReactNode;
+}
 
-  // Skip navigation and footer on specific pages
-  const skipNav = ["/signin", "/signup"].includes(pathname);
-
+export function PageLayout({ children }: PageLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col pattern-container">
-      {!skipNav && <Navbar />}
-
-      <main className="flex-1 w-full">
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container">
+          <MainNav />
+        </div>
+      </header>
+      <main className="flex-1">
         {children}
       </main>
-
-      {!skipNav && <Footer />}
+      <Footer />
     </div>
   );
 }

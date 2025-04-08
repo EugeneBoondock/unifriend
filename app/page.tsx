@@ -1,343 +1,233 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
+'use client';
 
-export default function Home() {
-  // South African university data
-  const universities = [
-    { name: "University of Cape Town", location: "Cape Town", color: "from-blue-500 to-blue-700" },
-    { name: "University of the Witwatersrand", location: "Johannesburg", color: "from-yellow-500 to-amber-600" },
-    { name: "Stellenbosch University", location: "Stellenbosch", color: "from-purple-500 to-purple-700" },
-    { name: "University of Pretoria", location: "Pretoria", color: "from-rose-500 to-red-700" },
-    { name: "University of KwaZulu-Natal", location: "Durban", color: "from-emerald-500 to-green-700" },
-    { name: "University of Johannesburg", location: "Johannesburg", color: "from-orange-500 to-amber-700" },
-    { name: "University of the Western Cape", location: "Cape Town", color: "from-cyan-500 to-blue-600" },
-    { name: "University of South Africa", location: "Pretoria", color: "from-indigo-500 to-indigo-700" },
-    { name: "North-West University", location: "Potchefstroom, Mahikeng, Vanderbijlpark", color: "from-amber-500 to-yellow-700" },
-    { name: "Rhodes University", location: "Makhanda", color: "from-violet-500 to-purple-700" },
-    { name: "University of the Free State", location: "Bloemfontein", color: "from-red-500 to-rose-700" },
-    { name: "Nelson Mandela University", location: "Port Elizabeth", color: "from-blue-400 to-cyan-600" }
-  ];
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/components/auth/AuthContext';
+import { MainNav } from '@/components/layout/MainNav';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-  // Common student challenges to address
-  const challenges = [
-    {
-      title: "NSFAS Funding",
-      description: "Struggling with NSFAS applications, appeals, and funding allocations",
-      icon: "💰",
-      link: "/nsfas"
-    },
-    {
-      title: "Academic Support",
-      description: "Need help with assignments, exam prep, and understanding complex concepts",
-      icon: "📚",
-      link: "/resources/study-tips"
-    },
-    {
-      title: "Mental Health",
-      description: "Battling stress, anxiety, and depression due to academic pressures",
-      icon: "🧠",
-      link: "/resources/mental-health"
-    },
-    {
-      title: "Accommodation",
-      description: "Finding affordable and safe housing near campus",
-      icon: "🏠",
-      link: "/resources/accommodation"
-    },
-    {
-      title: "Career Guidance",
-      description: "Uncertainty about career paths and job opportunities after graduation",
-      icon: "💼",
-      link: "/resources/career"
-    },
-    {
-      title: "Campus Life",
-      description: "Adjusting to university life and building a social network",
-      icon: "🎓",
-      link: "/unicircle"
-    }
-  ];
+export default function HomePage() {
+  const { user, loading } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
-  // Platform features
-  const features = [
-    {
-      title: "NSFAS Hub",
-      icon: "🎯",
-      description: "Complete NSFAS guidance from application to appeals, with status tracking and direct support from successful applicants."
-    },
-    {
-      title: "Study Resources",
-      icon: "📖",
-      description: "Access past papers, study guides, and course materials across various disciplines, with peer-reviewed content."
-    },
-    {
-      title: "Mentorship Network",
-      icon: "👥",
-      description: "Connect with senior students who've faced the same challenges and can provide personalized academic and career guidance."
-    },
-    {
-      title: "Student Community",
-      icon: "🌐",
-      description: "Join South Africa's largest student forum to discuss academics, campus life, and find peer support for any student issue."
-    }
-  ];
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // Testimonials
-  const testimonials = [
-    {
-      quote: "After my NSFAS application was rejected, I was devastated. The appeal guidance on Unifriend helped me correct my submission issues and my appeal was approved within 3 weeks!",
-      name: "Thabo B.",
-      university: "University of Pretoria, 2nd Year",
-      initials: "TB"
-    },
-    {
-      quote: "The mental health resources and peer support groups helped me overcome severe anxiety during exam periods. I finally feel like I'm not alone in these struggles.",
-      name: "Lerato M.",
-      university: "Stellenbosch University, 3rd Year",
-      initials: "LM"
-    },
-    {
-      quote: "As a first-generation student, university was overwhelming. My Unifriend mentor helped me navigate everything from course selection to finding affordable accommodation near campus.",
-      name: "Sizwe N.",
-      university: "University of KwaZulu-Natal, 1st Year",
-      initials: "SN"
-    }
-  ];
+  if (!mounted) return null;
 
   return (
-    <main className="flex flex-col">
-      {/* Hero section */}
-      <section className="py-20 bg-gradient-to-br from-purple-600 to-indigo-700 dark:from-[#513c64] dark:to-[#262626] text-white">
-        <div className="container grid md:grid-cols-2 gap-10 items-center">
-          <div className="space-y-6">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tighter">
-              The Ultimate Home for South African Students
-            </h1>
-            <p className="text-lg">
-              Unifriend is your all-in-one platform for NSFAS support, academic resources, mentorship, and connecting with fellow students across South Africa.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" asChild className="bg-white text-purple-700 hover:bg-gray-100 dark:bg-white/90 dark:hover:bg-white">
-                <Link href="/signup">Join Community</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="border-white text-white hover:bg-white/10">
-                <Link href="/forum">Explore Forum</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <div className="w-full max-w-md bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
-              <div className="aspect-[9/16] bg-white/20 rounded-lg flex items-center justify-center overflow-hidden border border-white/30">
-                <Image
-                  src="/students-group.jpg"
-                  alt="Group of South African university students"
-                  width={400}
-                  height={711}
-                  className="w-full h-full object-cover"
-                  priority
-                  quality={100}
-                />
+    <div className="flex flex-col min-h-screen">
+      {/* Hero Section */}
+      <section className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/5 z-0"></div>
+        <div className="relative z-10 container mx-auto px-4 py-16 md:py-24 lg:py-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="space-y-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+                Your Ultimate University Companion
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                Connect with fellow students, access resources, track applications, and navigate university life with ease.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                {!loading && !user ? (
+                  <>
+                    <Button size="lg" asChild>
+                      <Link href="/signup">Join UniFriend</Link>
+                    </Button>
+                    <Button size="lg" variant="outline" asChild>
+                      <Link href="/signin">Sign In</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button size="lg" asChild>
+                      <Link href="/dashboard">Go to Dashboard</Link>
+                    </Button>
+                    <Button size="lg" variant="outline" asChild>
+                      <Link href="/resources">Explore Resources</Link>
+                    </Button>
+                  </>
+                )}
               </div>
-              <p className="mt-4 text-center text-sm text-white/80">
-                Overcome Every Student Challenge
-              </p>
-              <p className="text-center text-xs text-white/60">
-                From NSFAS to Academic Success
-              </p>
+            </div>
+            <div className="hidden md:block">
+              <img 
+                src="/images/hero-illustration.svg" 
+                alt="Students collaborating" 
+                className="w-full h-auto rounded-lg shadow-xl"
+                onError={(e) => {
+                  e.currentTarget.src = "https://placehold.co/600x400/e2e8f0/64748b?text=UniFriend";
+                }}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Student challenges section */}
-      <section className="py-20 bg-background dark:bg-[#262626] pattern-container">
-        <div className="container">
+      {/* Features Section */}
+      <section className="bg-muted/50 py-16">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">We Understand Your Challenges</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Unifriend provides targeted solutions for the most common challenges South African students face
+            <h2 className="text-3xl font-bold">Everything You Need for University Success</h2>
+            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+              UniFriend brings together all the tools and resources you need to thrive in your academic journey.
             </p>
           </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {challenges.map((challenge, i) => (
-              <Link href={challenge.link} key={i} className="group">
-                <Card className="h-full transition-all pattern-card hover:shadow-md group-hover:border-primary/50">
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl" role="img" aria-label={challenge.title}>
-                        {challenge.icon}
-                      </span>
-                      <CardTitle>{challenge.title}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{challenge.description}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="ghost" className="text-primary">Find Solutions</Button>
-                  </CardFooter>
-                </Card>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <FeatureCard 
+              icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>}
+              title="Study Resources"
+              description="Access and share study materials, notes, past papers, and more."
+              link="/resources"
+            />
+            <FeatureCard 
+              icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 6.1H3"></path><path d="M21 12.1H3"></path><path d="M15.1 18H3"></path></svg>}
+              title="Application Tracking"
+              description="Keep track of your university and NSFAS applications in one place."
+              link="/applications"
+            />
+            <FeatureCard 
+              icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg>}
+              title="Community Forum"
+              description="Ask questions, share advice, and connect with fellow students."
+              link="/forum"
+            />
+            <FeatureCard 
+              icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
+              title="Mentorship"
+              description="Connect with experienced students for guidance and support."
+              link="/mentorship"
+            />
           </div>
         </div>
       </section>
 
-      {/* How Unifriend helps section */}
-      <section className="py-20 bg-background dark:bg-[#262626] pattern-container border-t border-border dark:border-purple-900/30">
-        <div className="container">
+      {/* Testimonials Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">How Unifriend Helps You</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our platform provides essential resources and community support for your entire academic journey
+            <h2 className="text-3xl font-bold">What Students Say</h2>
+            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+              Hear from students who have transformed their university experience with UniFriend.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, i) => (
-              <Card key={i} className="pattern-card">
-                <CardHeader>
-                  <span className="text-3xl mb-2" role="img" aria-label={feature.title}>
-                    {feature.icon}
-                  </span>
-                  <CardTitle>{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" className="text-primary">Learn More</Button>
-                </CardFooter>
-              </Card>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <TestimonialCard 
+              quote="UniFriend helped me connect with seniors who guided me through my first year. The resources section saved me during exams!"
+              author="Thabo M."
+              role="First Year Student"
+              university="University of Cape Town"
+            />
+            <TestimonialCard 
+              quote="The NSFAS application support was invaluable. I wouldn't have managed to complete my funding application without UniFriend's guidance."
+              author="Lerato K."
+              role="Second Year Student"
+              university="University of Johannesburg"
+            />
+            <TestimonialCard 
+              quote="As an international student, UniFriend made it easy to find accommodation and connect with local students. The community here is amazing!"
+              author="Mohammed A."
+              role="Masters Student"
+              university="Stellenbosch University"
+            />
           </div>
         </div>
       </section>
 
-      {/* Universities section */}
-      <section className="py-20 bg-background dark:bg-[#262626] pattern-container border-t border-border dark:border-purple-900/30">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Connect With Students From All Universities</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Join students from across South Africa in building a supportive academic community
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {universities.map((uni, i) => (
-              <div key={i} className="rounded-lg overflow-hidden">
-                <div className={`bg-gradient-to-r ${uni.color} p-4 text-white h-full flex flex-col justify-between transition-transform hover:scale-[1.02]`}>
-                  <h3 className="font-bold">{uni.name}</h3>
-                  <p className="text-sm text-white/80">{uni.location}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Button variant="outline" className="dark:border-purple-900/40 dark:text-white dark:hover:bg-purple-900/20">
-              Explore All 26 Universities
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust factors section */}
-      <section className="py-16 bg-slate-50 dark:bg-[#1e1e1e]">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Students Trust Unifriend</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Created by South African students, for South African students
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-            <div className="relative pl-8">
-              <div className="absolute top-0 left-0 w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 flex items-center justify-center text-sm font-bold">1</div>
-              <h3 className="font-bold mb-2">NSFAS Appeal Success Rate</h3>
-              <p className="text-sm text-muted-foreground">
-                Students using our NSFAS appeal guidance report an 80% success rate compared to the national average of 40%. Our step-by-step templates and mentor support make the difference.
-              </p>
-            </div>
-            <div className="relative pl-8">
-              <div className="absolute top-0 left-0 w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 flex items-center justify-center text-sm font-bold">2</div>
-              <h3 className="font-bold mb-2">Verified Student Resources</h3>
-              <p className="text-sm text-muted-foreground">
-                All study materials are verified by top-performing students and lecturers, ensuring you only access accurate and helpful content for your specific courses.
-              </p>
-            </div>
-            <div className="relative pl-8">
-              <div className="absolute top-0 left-0 w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 flex items-center justify-center text-sm font-bold">3</div>
-              <h3 className="font-bold mb-2">University-Specific Support</h3>
-              <p className="text-sm text-muted-foreground">
-                We understand that each university has unique challenges and processes. Our resources are tailored to your specific institution, not generic advice.
-              </p>
-            </div>
-            <div className="relative pl-8">
-              <div className="absolute top-0 left-0 w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 flex items-center justify-center text-sm font-bold">4</div>
-              <h3 className="font-bold mb-2">Mental Health Focus</h3>
-              <p className="text-sm text-muted-foreground">
-                We provide free access to mental wellness resources, peer support groups, and connections to campus mental health services to help you manage academic stress.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials section */}
-      <section className="py-20 bg-background dark:bg-[#262626] pattern-container border-t border-border dark:border-purple-900/30">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What Students Say</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Hear from students who have found support and community on Unifriend
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, i) => (
-              <Card key={i} className="pattern-card">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-brand-purple/20 text-purple-800 dark:text-purple-300 flex items-center justify-center font-medium">
-                      {testimonial.initials}
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">{testimonial.name}</CardTitle>
-                      <CardDescription>{testimonial.university}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">"{testimonial.quote}"</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA section */}
-      <section className="py-20 bg-purple-600 dark:bg-brand-purple text-white">
-        <div className="container text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Transform Your University Experience?</h2>
-          <p className="max-w-2xl mx-auto mb-8">
-            Join 50,000+ South African students who are overcoming challenges together and building a brighter academic future.
+      {/* CTA Section */}
+      <section className="bg-primary text-primary-foreground py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-6">Ready to Transform Your University Experience?</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
+            Join thousands of South African students already using UniFriend to navigate university life with confidence.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-white text-purple-700 hover:bg-gray-100 dark:bg-white/90 dark:hover:bg-white">
-              Create Free Account
+          {!loading && !user ? (
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/signup">Get Started Today</Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-              Get NSFAS Help
+          ) : (
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/dashboard">Go to Your Dashboard</Link>
             </Button>
-          </div>
+          )}
         </div>
       </section>
-    </main>
+
+      {/* Footer */}
+      <footer className="bg-background border-t py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <img src="/logo.png" alt="UniFriend Logo" className="h-8 w-auto" />
+                <span className="font-bold">UniFriend</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Your ultimate companion for navigating university life in South Africa.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4">Platform</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/resources" className="text-muted-foreground hover:text-foreground">Resources</Link></li>
+                <li><Link href="/forum" className="text-muted-foreground hover:text-foreground">Forum</Link></li>
+                <li><Link href="/events" className="text-muted-foreground hover:text-foreground">Events</Link></li>
+                <li><Link href="/mentorship" className="text-muted-foreground hover:text-foreground">Mentorship</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4">Support</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
+                <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact Us</Link></li>
+                <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQs</Link></li>
+                <li><Link href="/feedback" className="text-muted-foreground hover:text-foreground">Feedback</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4">Legal</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
+                <li><Link href="/cookies" className="text-muted-foreground hover:text-foreground">Cookie Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} UniFriend. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function FeatureCard({ icon, title, description, link }: { icon: React.ReactNode, title: string, description: string, link: string }) {
+  return (
+    <div className="bg-background rounded-lg p-6 shadow-sm border transition-all hover:shadow-md">
+      <div className="text-primary mb-4">{icon}</div>
+      <h3 className="text-xl font-medium mb-2">{title}</h3>
+      <p className="text-muted-foreground mb-4">{description}</p>
+      <Button variant="link" className="p-0" asChild>
+        <Link href={link}>Learn more →</Link>
+      </Button>
+    </div>
+  );
+}
+
+function TestimonialCard({ quote, author, role, university }: { quote: string, author: string, role: string, university: string }) {
+  return (
+    <div className="bg-background rounded-lg p-6 shadow-sm border">
+      <div className="mb-4 text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path></svg>
+      </div>
+      <p className="mb-4 text-muted-foreground">{quote}</p>
+      <div>
+        <p className="font-medium">{author}</p>
+        <p className="text-sm text-muted-foreground">{role}, {university}</p>
+      </div>
+    </div>
   );
 }

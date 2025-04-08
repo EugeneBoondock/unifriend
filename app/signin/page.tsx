@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { useAuth } from '@/components/auth/AuthContext';
 
 export default function SignIn() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { signIn } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,24 +22,17 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      const { error } = await signIn(email, password);
 
-      if (result?.error) {
-        toast.error("Invalid credentials. Please try again.");
-        setIsLoading(false);
-        return;
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Signed in successfully!');
+        router.push('/dashboard');
       }
-
-      toast.success("Signed in successfully!");
-      router.push("/");
-      router.refresh();
     } catch (error) {
-      console.error("Sign in error:", error);
-      toast.error("An error occurred. Please try again later.");
+      console.error('Sign in error:', error);
+      toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +42,7 @@ export default function SignIn() {
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Sign in to Unifriend</CardTitle>
+          <CardTitle className="text-2xl font-bold">Sign in to UniFriend</CardTitle>
           <CardDescription>
             Enter your email below to sign in to your account
           </CardDescription>
@@ -91,35 +85,6 @@ export default function SignIn() {
                 </Button>
               </div>
             </form>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t"></div>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              type="button"
-              className="flex items-center justify-center gap-2"
-              onClick={() => {
-                setIsLoading(true);
-                signIn("google", { callbackUrl: "/" });
-              }}
-              disabled={isLoading}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                <circle cx="12" cy="12" r="10"></circle>
-                <circle cx="12" cy="12" r="4"></circle>
-                <line x1="21.17" y1="8" x2="12" y2="8"></line>
-                <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
-                <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
-              </svg>
-              Sign in with Google
-            </Button>
           </div>
         </CardContent>
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
