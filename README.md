@@ -1,109 +1,204 @@
-# UniFriend
+# UniFriend - Student Platform
 
-UniFriend is a social platform designed to connect students across South African universities, TVET colleges, and other educational institutions. The platform aims to foster collaboration, networking, and community building among students.
+UniFriend is a comprehensive platform designed for students in South Africa to connect, share resources, and collaborate on their academic journey.
 
 ## Features
 
-- User authentication with multiple registration paths (Students, Alumni, Human)
-- Support for universities and TVET colleges across South Africa
-- Dark mode interface
-- Secure registration with reCAPTCHA protection
+- **Authentication System**: Secure email/password authentication using Supabase
+- **User Profiles**: Detailed user profiles with academic information
+- **Dashboard**: Personalized dashboard with activity tracking and statistics
+- **Resource Sharing**: Upload and download study materials
+- **Discussion Forum**: Ask questions and share advice with fellow students
+- **Study Groups**: Create and join study groups for collaborative learning
+- **Real-time Notifications**: Stay updated with platform activities
+- **Gamification**: Achievements, badges, and leaderboards to encourage engagement
+
+## Tech Stack
+
+- **Frontend**: Next.js, React, TypeScript, Tailwind CSS
+- **Backend**: Supabase (Authentication, Database, Storage, Real-time)
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **State Management**: React Context API
+- **Deployment**: Vercel (recommended)
+
+## Project Structure
+
+```
+unifriend/
+├── app/                    # Next.js app directory
+│   ├── achievements/       # Gamification features
+│   ├── api/                # API routes
+│   ├── dashboard/          # User dashboard
+│   ├── forum/              # Discussion forum
+│   ├── notifications/      # User notifications
+│   ├── profile/            # User profile
+│   ├── resources/          # Study resources
+│   ├── study-groups/       # Collaborative study groups
+│   └── ...                 # Other pages
+├── components/             # Reusable React components
+│   ├── auth/               # Authentication components
+│   ├── layout/             # Layout components
+│   └── ui/                 # UI components
+├── lib/                    # Utility functions and services
+│   ├── authService.ts      # Authentication service
+│   ├── forumService.ts     # Forum service
+│   ├── gamificationService.ts # Gamification service
+│   ├── notificationService.ts # Notification service
+│   ├── resourceService.ts  # Resource service
+│   ├── studyGroupService.ts # Study group service
+│   ├── supabaseClient.ts   # Supabase client
+│   └── types.ts            # TypeScript type definitions
+├── public/                 # Static assets
+└── ...                     # Configuration files
+```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
-- A PostgreSQL database
+- Node.js 18+ and npm
+- Supabase account
 
-### Installation
+### Environment Setup
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/unifriend.git
-cd unifriend
-```
+   ```
+   git clone https://github.com/EugeneBoondock/unifriend.git
+   cd unifriend
+   ```
 
 2. Install dependencies:
-```bash
-npm install
-```
+   ```
+   npm install
+   ```
 
 3. Create a `.env.local` file in the root directory with the following variables:
-```env
-# Next Auth Configuration
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-32-character-secret-key-here
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-# Database
-DATABASE_URL="your-postgresql-database-url"
+4. Start the development server:
+   ```
+   npm run dev
+   ```
 
-# Google reCAPTCHA
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LdOdgUrAAAAAMNq6_5ttnbMboLWDpfM9CTtzMtp
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-# Add any other API keys or secrets here
-```
+## Deployment
 
-4. Initialize the database:
-```bash
-npx prisma generate
-npx prisma db push
-```
+### Vercel Deployment
 
-5. Start the development server:
-```bash
-npm run dev
-```
+1. Push your code to GitHub.
+2. Connect your GitHub repository to Vercel.
+3. Configure the environment variables in Vercel:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy the application.
 
-The application will be available at `http://localhost:3000`
+## Supabase Setup
 
-### Environment Variables
+### Database Tables
 
-- `NEXTAUTH_URL`: The canonical URL of your website (required for NextAuth.js)
-- `NEXTAUTH_SECRET`: A secret key for NextAuth.js (generate one using `openssl rand -base64 32`)
-- `DATABASE_URL`: Your PostgreSQL database connection string
-- `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`: Google reCAPTCHA v2 site key
+The application requires the following tables in your Supabase database:
 
-## Development
+1. **profiles** - User profile information
+2. **resources** - Study materials shared by users
+3. **posts** - Forum discussion posts
+4. **comments** - Comments on forum posts
+5. **study_groups** - Study groups information
+6. **study_group_members** - Members of study groups
+7. **notifications** - User notifications
+8. **achievements** - Available achievements
+9. **user_achievements** - User's progress on achievements
+10. **badges** - Available badges
+11. **user_badges** - Badges earned by users
+12. **user_points** - User points and levels for gamification
 
-### Tech Stack
+### Authentication Setup
 
-- [Next.js 15](https://nextjs.org/) with App Router
-- [TypeScript](https://www.typescriptlang.org/)
-- [Prisma](https://www.prisma.io/) for database ORM
-- [NextAuth.js](https://next-auth.js.org/) for authentication
-- [Tailwind CSS](https://tailwindcss.com/) for styling
-- [Radix UI](https://www.radix-ui.com/) for UI components
-- [Google reCAPTCHA](https://www.google.com/recaptcha) for form protection
+1. Enable Email/Password authentication in Supabase Authentication settings.
+2. Configure email templates for verification and password reset.
+3. Set up redirect URLs for authentication flows.
 
-### Project Structure
+## Features Documentation
 
-```
-unifriend/
-├── app/                    # Next.js app router pages
-├── components/            # Reusable UI components
-├── lib/                   # Utility functions and configurations
-├── prisma/               # Database schema and migrations
-├── public/               # Static files
-└── styles/               # Global styles
-```
+### Authentication
 
-### Contributing
+The platform uses Supabase Authentication for user management. Features include:
+- Email/password sign up and sign in
+- Email verification
+- Password reset functionality
+- Protected routes for authenticated users
 
-1. Create a new branch for your feature
-2. Make your changes
-3. Submit a pull request
+### User Profiles
 
-## License
+Users can create and manage their profiles with:
+- Personal information
+- University and course details
+- Profile picture
+- Bio and interests
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Resource Sharing
 
-## Acknowledgments
+Students can share and access study materials:
+- Upload documents (PDF, DOC, PPT, etc.)
+- Browse resources by category
+- Search functionality
+- Download tracking
 
-- Thanks to all contributors and maintainers
-- Special thanks to the South African student community
+### Discussion Forum
+
+A community space for academic discussions:
+- Create discussion threads
+- Reply to posts
+- Filter by categories
+- Mark discussions as resolved
+
+### Study Groups
+
+Collaborative learning through study groups:
+- Create study groups for specific courses
+- Join existing groups
+- Group member management
+- Recommended groups based on user's courses
+
+### Notifications
+
+Real-time notification system for:
+- Forum replies and mentions
+- Resource updates
+- Study group invitations
+- Achievement unlocks
+
+### Gamification
+
+Engagement features to motivate users:
+- Points system for platform activities
+- Achievements for completing specific actions
+- Badges for special accomplishments
+- Leaderboard to showcase top contributors
+
+## Maintenance and Future Development
+
+### Recommended Improvements
+
+1. **Mobile Application**: Develop a mobile app version using React Native
+2. **Advanced Search**: Implement full-text search for resources and forum posts
+3. **Video Conferencing**: Integrate video chat for study groups
+4. **AI Recommendations**: Add AI-powered content recommendations
+5. **Calendar Integration**: Add event scheduling and calendar integration
+
+### Performance Optimization
+
+- Implement server-side caching for frequently accessed data
+- Optimize image loading with next/image
+- Use incremental static regeneration for semi-static pages
 
 ## Support
 
-For support, please open an issue in the GitHub repository or contact the maintainers.
+For any questions or issues, please contact the development team or open an issue on GitHub.
+
+---
+
+Built with ❤️ for South African students
