@@ -1,0 +1,405 @@
+// This is your Prisma schema file
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// NextAuth Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  university    String?
+  studentId     String?
+  course        String?
+  yearOfStudy   Int?
+  bio           String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  verified Boolean @default(false)
+
+  accounts      Account[]
+  sessions      Session[]
+  posts         Post[]
+  comments      Comment[]
+  resources     Resource[]
+  events        Event[]
+  mentorships   Mentorship[]
+  likes         Like[] // Changed this line
+  protestEvents ProtestEvent[]
+  protestParticipants ProtestParticipant[]
+  reservations  Reservation[]
+  readingLists  ReadingList[]
+  ads Ads[]
+  helpRequests HelpRequest[]
+  volunteers Volunteer[]
+  ratings Rating[]
+  studyPlans StudyPlan[]
+  practiceTests PracticeTest[]
+  studySessions StudySession[]
+  verificationRequests VerificationRequest[]
+  classNotesRequests ClassNotesRequest[]
+  lectureRecordings LectureRecording[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  category  String?
+
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  comments  Comment[]
+  likes     Like[] // Changed this line
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  likes     Like[] // Changed this line
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  fileUrl     String?
+  category    String
+  university  String?
+  course      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String    @db.Text
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  university  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organizer   User     @relation(fields: [organizerId], references: [id])
+  organizerId String
+}
+
+model Mentorship {
+  id          String   @id @default(cuid())
+  subject     String
+  description String    @db.Text
+  status      String    @default("available") // available, assigned, completed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  mentor      User     @relation(fields: [mentorId], references: [id])
+  mentorId    String
+}
+
+
+model ProtestEvent {
+  id          String   @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  university  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  safetyGuidelines String?  @db.Text
+  phoneNumber String?
+  bankAccountDetails String?
+
+  organizer   User     @relation(fields: [organizerId], references: [id])
+  organizerId String
+  participants ProtestParticipant[]
+}
+
+model ProtestParticipant {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  event       ProtestEvent     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId     String
+
+  @@unique([userId, eventId])
+}
+
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  description String?   @db.Text
+  coverUrl    String?
+  category    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reservations Reservation[]
+  booksInReadingList BookInReadingList[]
+}
+
+model Reservation {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId      String
+}
+
+model ReadingList {
+  id          String   @id @default(cuid())
+  name       String
+  description String?   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  books       BookInReadingList[]
+}
+
+model BookInReadingList {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId      String
+  readingList ReadingList @relation(fields: [readingListId], references: [id], onDelete: Cascade)
+  readingListId String
+
+  @@unique([bookId, readingListId])
+}
+
+model Ads {
+  id          String   @id @default(cuid())
+  title                    String
+  description            String?   @db.Text
+  imageUrl                 String?
+  targetedUniversities String[]
+  targetedCourses      String[]
+  targetedYearOfStudies  Int[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+model HelpRequest {
+  id          String   @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  category    String
+  university  String?
+  course      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+model Volunteer {
+  id          String   @id @default(cuid())
+  category    String
+  university  String?
+  course      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  ratings Rating[]
+}
+
+model Rating {
+  id          String   @id @default(cuid())
+  value       Int
+  comment     String?   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  volunteer  Volunteer?     @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  volunteerId String?
+}
+
+model StudyPlan {
+  id          String   @id @default(cuid())
+  name       String
+  description String?   @db.Text
+  course     String
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+}
+
+model PracticeTest {
+  id          String   @id @default(cuid())
+  name       String
+  description String?   @db.Text
+  course     String
+  duration    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+}
+
+model StudySession {
+  id          String   @id @default(cuid())
+  name       String
+  description String?   @db.Text
+  course     String
+  location   String?
+  date      DateTime
+  duration   Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organizer   User     @relation(fields: [organizerId], references: [id])
+  organizerId String
+}
+
+model ClassNotesRequest {
+  id          String   @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  course     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+}
+
+model LectureRecording {
+  id          String   @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  course     String
+  url        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+}
+
+model CatchUpMaterial {
+  id          String   @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  course     String
+  url        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VerificationRequest {
+  id String @id @default(cuid())
+  userId String
+  image String
+  status String @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  postId String?
+  post   Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId], name: "uniqueLikePerPost")
+  @@unique([userId, commentId], name: "uniqueLikePerComment")
+
+  @@index([postId])
+  @@index([commentId])
+}

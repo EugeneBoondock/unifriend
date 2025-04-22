@@ -1,0 +1,22 @@
+[build]
+  command = "npx prisma generate && next build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  PRISMA_SKIP_GENERATE_AND_VALIDATE = "true"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[headers]]
+  for = "/unifriend.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+    Content-Type = "image/png"
+
+# Allow direct access to static assets
+[[headers]]
+  for = "/*.(jpg|jpeg|png|gif|ico|svg|webp)"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"

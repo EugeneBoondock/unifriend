@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 15%; /* #262626 - Dark grey */
+    --foreground: 210 20% 98%;
+    --card: 267 10% 19%; /* Slightly purple-tinted dark grey */
+    --card-foreground: 210 20% 98%;
+    --popover: 267 10% 19%; /* Slightly purple-tinted dark grey */
+    --popover-foreground: 210 20% 98%;
+    --primary: 267 28% 31%; /* #513c64 - Primary purple */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 267 15% 22%; /* Slightly lighter purple-grey */
+    --secondary-foreground: 210 20% 98%;
+    --muted: 267 15% 22%; /* Slightly lighter purple-grey */
+    --muted-foreground: 217.9 10.6% 75%;
+    --accent: 267 28% 31%; /* #513c64 - Primary purple */
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 267 15% 25%; /* Border slightly lighter than background */
+    --input: 267 15% 25%; /* Input slightly lighter than background */
+    --ring: 267 28% 31%; /* #513c64 - Primary purple */
+    --radius: 0.5rem;
+    --chart-1: 267 70% 50%;
+    --chart-2: 239 60% 60%;
+    --chart-3: 290 60% 55%;
+    --chart-4: 320 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    transition: color 150ms ease, background-color 150ms ease;
+  }
+
+  /* Create container for textured backgrounds */
+  .pattern-container {
+    @apply bg-background bg-dark-pattern;
+    min-height: 100vh;
+  }
+
+  /* Make sure all text remains visible during theme change */
+  h1, h2, h3, h4, h5, h6, p, span, a, button {
+    @apply transition-colors;
+  }
+}
+
+/* Custom styling for cards to have subtle purple outlines */
+.pattern-card {
+  @apply border border-purple-900/40 shadow-md bg-card;
+  box-shadow: 0 4px 12px rgba(81, 60, 100, 0.2);
+  transition: box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
