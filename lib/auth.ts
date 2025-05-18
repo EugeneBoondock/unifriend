@@ -1,88 +1,103 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { NextAuthOptions } from "next-auth";
-import { prisma } from "./prisma";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import { createMiddleware } from 'next-api-middleware';
+import { supabase } from '@/lib/supabaseClient';
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/signin",
-  },
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+// Authentication middleware for API routes
+export const withAuth = createMiddleware(async (req, res, next) => {
+  // Get the token from the Authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized: Missing or invalid token' });
+  }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-        });
+  const token = authHeader.split(' ')[1];
+  
+  try {
+    // Verify the token with Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    }
+    
+    // Add the user to the request object
+    req.user = user;
+    
+    // Continue to the next middleware or API route handler
+    return next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return res.status(500).json({ error: 'Internal server error during authentication' });
+  }
+});
 
-        if (!user) {
-          return null;
-        }
-
-        const passwordMatch = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!passwordMatch) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        };
-      },
-    }),
-  ],
-  callbacks: {
-    async session({ token, session }) {
-      if (token) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-      }
-      return session;
-    },
-    async jwt({ token, user }) {
-      const dbUser = await prisma.user.findFirst({
-        where: {
-          email: token.email,
-        },
-      });
-
-      if (!dbUser) {
-        if (user) {
-          token.id = user?.id;
-        }
-        return token;
-      }
-
+// Client-side authentication check
+export const requireAuth = (gssp) => {
+  return async (context) => {
+    const { req } = context;
+    
+    // Get the session cookie
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    // If no session or error, redirect to login
+    if (!session || error) {
       return {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
+        redirect: {
+          destination: '/signin?redirect=' + encodeURIComponent(req.url),
+          permanent: false,
+        },
       };
-    },
-  },
-}; 
+    }
+    
+    // Call the original getServerSideProps
+    const gsspData = await gssp(context);
+    
+    // Add the user to the props
+    return {
+      ...gsspData,
+      props: {
+        ...gsspData.props,
+        user: session.user,
+      },
+    };
+  };
+};
+
+// Authentication hook for client components
+export const useRequireAuth = () => {
+  const router = useRouter();
+  const { user, isLoading } = useAuth();
+  
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/signin?redirect=' + encodeURIComponent(router.asPath));
+    }
+  }, [user, isLoading, router]);
+  
+  return { user, isLoading };
+};
+
+// Route guard component
+export const AuthGuard = ({ children }) => {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+  
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/signin?redirect=' + encodeURIComponent(router.asPath));
+    }
+  }, [user, isLoading, router]);
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return null;
+  }
+  
+  return <>{children}</>;
+};

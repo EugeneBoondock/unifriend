@@ -1,398 +1,394 @@
-import Link from "next/link";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { useAuth } from '@/components/auth/AuthContext';
+import { supabase } from '@/lib/supabaseClient';
 
-export default function UniVendorsPage() {
-  // Sample universities with vendors
-  const universities = [
-    { id: "uct", name: "University of Cape Town", vendorCount: 48 },
-    { id: "wits", name: "University of the Witwatersrand", vendorCount: 42 },
-    { id: "up", name: "University of Pretoria", vendorCount: 37 },
-    { id: "ukzn", name: "University of KwaZulu-Natal", vendorCount: 33 },
-    { id: "uj", name: "University of Johannesburg", vendorCount: 31 },
-    { id: "su", name: "Stellenbosch University", vendorCount: 29 },
-    { id: "unisa", name: "University of South Africa", vendorCount: 25 },
-    { id: "uwc", name: "University of the Western Cape", vendorCount: 22 },
-    { id: "nwu", name: "North-West University", vendorCount: 18 },
-  ];
+export default function UniVendorPage() {
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('services');
+  const [services, setServices] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLocation, setSelectedLocation] = useState('all');
 
-  // Sample featured vendors
-  const featuredVendors = [
-    {
-      id: "v1",
-      name: "Thandi's Textbook Exchange",
-      university: "University of Cape Town",
-      category: "Textbooks",
-      description: "Affordable second-hand textbooks for all UCT courses. Save up to 70% compared to new books!",
-      rating: 4.8,
-      reviews: 56,
-      location: "Upper Campus, near the library",
-      image: "/placeholder-vendor.png",
-      featured: true
-    },
-    {
-      id: "v2",
-      name: "Sipho's Stationary Supplies",
-      university: "University of the Witwatersrand",
-      category: "Stationery",
-      description: "Quality stationery at student-friendly prices. Notebooks, pens, highlighters, and exam essentials.",
-      rating: 4.9,
-      reviews: 42,
-      location: "Main Campus, Student Center Building",
-      image: "/placeholder-vendor.png",
-      featured: true
-    },
-    {
-      id: "v3",
-      name: "Fresh Bites by Lesego",
-      university: "University of Johannesburg",
-      category: "Food & Snacks",
-      description: "Healthy and affordable lunch options, fresh fruits, and homemade snacks perfect for study sessions.",
-      rating: 4.7,
-      reviews: 38,
-      location: "APK Campus, outside Student Center",
-      image: "/placeholder-vendor.png",
-      featured: true
+  // Filter options
+  const categories = {
+    services: ['Tutoring', 'Academic Writing', 'Design Services', 'Programming', 'Translation', 'Event Planning', 'Photography', 'Other'],
+    products: ['Electronics', 'Stationery', 'Books', 'Clothing', 'Furniture', 'Appliances', 'Sports Equipment', 'Other']
+  };
+  
+  const locations = ['Cape Town', 'Johannesburg', 'Pretoria', 'Durban', 'Port Elizabeth', 'Bloemfontein', 'Stellenbosch', 'Online'];
+
+  useEffect(() => {
+    fetchServices();
+    fetchProducts();
+  }, []);
+
+  const fetchServices = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('vendor_services')
+        .select(`
+          *,
+          profiles:user_id (id, name, image)
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setServices(data || []);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
 
-  // Sample product categories
-  const categories = [
-    { id: "textbooks", name: "Textbooks", icon: "📚", vendorCount: 87 },
-    { id: "stationery", name: "Stationery & Supplies", icon: "✏️", vendorCount: 64 },
-    { id: "food", name: "Food & Snacks", icon: "🍎", vendorCount: 51 },
-    { id: "electronics", name: "Electronics", icon: "💻", vendorCount: 32 },
-    { id: "clothing", name: "Clothing & Accessories", icon: "👕", vendorCount: 29 },
-    { id: "services", name: "Academic Services", icon: "📝", vendorCount: 27 },
-  ];
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('vendor_products')
+        .select(`
+          *,
+          profiles:user_id (id, name, image)
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
 
-  // Sample recent listings
-  const recentListings = [
-    {
-      id: "l1",
-      title: "Business Management 101 Textbook",
-      price: "R280",
-      category: "Textbooks",
-      vendor: "Thandi's Textbook Exchange",
-      university: "UCT",
-      postedAt: "2 hours ago",
-      condition: "Like New"
-    },
-    {
-      id: "l2",
-      title: "Engineering Calculator (Casio FX-991ZA)",
-      price: "R220",
-      category: "Electronics",
-      vendor: "TechTrade Student Shop",
-      university: "UP",
-      postedAt: "3 hours ago",
-      condition: "Good"
-    },
-    {
-      id: "l3",
-      title: "Homemade Lunch Wraps - Daily Fresh",
-      price: "R40",
-      category: "Food & Snacks",
-      vendor: "Fresh Bites by Lesego",
-      university: "UJ",
-      postedAt: "1 hour ago",
-      condition: "Fresh"
-    },
-    {
-      id: "l4",
-      title: "Law Textbook Bundle (1st Year)",
-      price: "R650",
-      category: "Textbooks",
-      vendor: "LegalLibrary",
-      university: "Wits",
-      postedAt: "5 hours ago",
-      condition: "Good"
-    },
-    {
-      id: "l5",
-      title: "Premium Notebook Bundle (5 pack)",
-      price: "R120",
-      category: "Stationery",
-      vendor: "Sipho's Stationery Supplies",
-      university: "Wits",
-      postedAt: "7 hours ago",
-      condition: "New"
-    },
-    {
-      id: "l6",
-      title: "Fresh Fruit Salad Cup",
-      price: "R25",
-      category: "Food & Snacks",
-      vendor: "Healthy Campus Eats",
-      university: "UKZN",
-      postedAt: "30 minutes ago",
-      condition: "Fresh"
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
     }
-  ];
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  // Filter services based on search and filters
+  const filteredServices = services.filter(service => {
+    const matchesSearch = 
+      searchQuery === '' || 
+      service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesCategory = 
+      selectedCategory === 'all' || 
+      service.category === selectedCategory;
+    
+    const matchesLocation = 
+      selectedLocation === 'all' || 
+      service.location === selectedLocation;
+    
+    return matchesSearch && matchesCategory && matchesLocation;
+  });
+
+  // Filter products based on search and filters
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = 
+      searchQuery === '' || 
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesCategory = 
+      selectedCategory === 'all' || 
+      product.category === selectedCategory;
+    
+    const matchesLocation = 
+      selectedLocation === 'all' || 
+      product.location === selectedLocation;
+    
+    return matchesSearch && matchesCategory && matchesLocation;
+  });
 
   return (
-    <div className="container max-w-6xl mx-auto px-4 py-12">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-8 mb-12">
-        <div className="flex flex-col md:flex-row items-center gap-8">
-          <div className="md:w-2/3">
-            <div className="flex gap-2 mb-3">
-              <Badge className="bg-emerald-600">New</Badge>
-              <Badge variant="outline" className="bg-white">Student-Powered Marketplace</Badge>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">UniVendors Marketplace</h1>
-            <p className="text-lg text-zinc-700 mb-6">
-              Supporting student entrepreneurs across South African universities. Buy and sell textbooks, stationery,
-              food, and more directly from fellow students on your campus.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button asChild>
-                <Link href="/uni-vendors/create">
-                  Become a Vendor
-                </Link>
-              </Button>
-              <Button variant="outline">
-                <Link href="#browse">
-                  Browse Products
-                </Link>
-              </Button>
-            </div>
-          </div>
-          <div className="md:w-1/3 flex justify-center">
-            <div className="w-48 h-48 bg-gradient-to-br from-emerald-200 to-teal-100 rounded-full flex items-center justify-center text-6xl">
-              🛍️
-            </div>
-          </div>
+    <div className="container py-6 md:py-8 pattern-container">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold tracking-tight">UniVendor</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Buy, sell, and exchange student services and products within your university community
+          </p>
         </div>
-      </section>
 
-      {/* Search Section */}
-      <section className="mb-12">
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
-          <div className="relative w-full sm:max-w-md">
-            <Input
-              type="search"
-              placeholder="Search for products, vendors or services..."
-              className="pr-10"
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="flex-1">
+            <Input 
+              placeholder="Search services, products, and more..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full"
             />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <span>Filter by:</span>
-            <Badge variant="outline" className="cursor-pointer">University</Badge>
-            <Badge variant="outline" className="cursor-pointer">Category</Badge>
-            <Badge variant="outline" className="cursor-pointer">Price</Badge>
+          <div className="w-full md:w-48">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories[activeTab].map(category => (
+                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </div>
-      </section>
-
-      {/* Universities & Categories Section */}
-      <section className="mb-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* University List */}
-          <div className="md:col-span-2">
-            <h2 className="text-2xl font-bold mb-4">Browse by University</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {universities.map((uni) => (
-                <Link key={uni.id} href={`/uni-vendors/university/${uni.id}`} className="block">
-                  <div className="border rounded-lg p-4 hover:border-emerald-300 hover:shadow-sm transition-all">
-                    <h3 className="font-semibold">{uni.name}</h3>
-                    <p className="text-sm text-zinc-500">{uni.vendorCount} vendors</p>
-                  </div>
-                </Link>
-              ))}
-              <Link href="/uni-vendors/university" className="block">
-                <div className="border border-dashed rounded-lg p-4 text-center text-zinc-500 hover:text-zinc-700 hover:border-zinc-400 transition-all">
-                  <span>View All Universities</span>
-                </div>
-              </Link>
-            </div>
-          </div>
-
-          {/* Categories */}
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Product Categories</h2>
-            <div className="space-y-3">
-              {categories.map((category) => (
-                <Link key={category.id} href={`/uni-vendors/category/${category.id}`} className="block">
-                  <div className="border rounded-lg p-3 hover:border-emerald-300 hover:shadow-sm transition-all">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{category.icon}</span>
-                      <div>
-                        <h3 className="font-medium">{category.name}</h3>
-                        <p className="text-xs text-zinc-500">{category.vendorCount} vendors</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+          <div className="w-full md:w-48">
+            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <SelectTrigger>
+                <SelectValue placeholder="Location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locations</SelectItem>
+                {locations.map(location => (
+                  <SelectItem key={location} value={location}>{location}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      </section>
 
-      {/* Featured Vendors */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Featured Student Vendors</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredVendors.map((vendor) => (
-            <Card key={vendor.id} className="overflow-hidden">
-              <div className="h-32 bg-gradient-to-r from-emerald-100 to-teal-50 flex items-center justify-center">
-                <span className="text-4xl">
-                  {vendor.category === "Textbooks" && "📚"}
-                  {vendor.category === "Stationery" && "✏️"}
-                  {vendor.category === "Food & Snacks" && "🍎"}
-                </span>
-              </div>
-              <CardHeader className="pb-2">
-                <div className="flex justify-between">
-                  <Badge>{vendor.category}</Badge>
-                  <div className="flex items-center gap-1">
-                    <span className="text-amber-500">★</span>
-                    <span className="text-sm">{vendor.rating}</span>
-                  </div>
-                </div>
-                <CardTitle className="mt-2">{vendor.name}</CardTitle>
-                <CardDescription className="text-xs">{vendor.university}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-zinc-600 mb-2">{vendor.description}</p>
-                <div className="flex items-start gap-1 text-xs text-zinc-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>{vendor.location}</span>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button size="sm" className="w-full" asChild>
-                  <Link href={`/uni-vendors/${vendor.id}`}>
-                    View Vendor
-                  </Link>
+        <Tabs defaultValue="services" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="flex justify-between items-center mb-6">
+            <TabsList className="grid grid-cols-2 w-full max-w-md">
+              <TabsTrigger value="services">Student Services</TabsTrigger>
+              <TabsTrigger value="products">Student Products</TabsTrigger>
+            </TabsList>
+            
+            {user ? (
+              activeTab === 'services' ? (
+                <Button asChild>
+                  <Link href="/uni-vendors/services/create">Offer a Service</Link>
                 </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Recent Listings */}
-      <section id="browse" className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Recent Listings</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {recentListings.map((listing) => (
-            <div key={listing.id} className="border rounded-lg p-4 hover:shadow-sm transition-all">
-              <div className="flex justify-between items-start mb-2">
-                <Badge variant="outline">{listing.category}</Badge>
-                <span className="text-xs text-zinc-500">{listing.postedAt}</span>
-              </div>
-              <h3 className="font-semibold mb-1">{listing.title}</h3>
-              <p className="text-lg font-bold text-emerald-700 mb-2">{listing.price}</p>
-              <div className="flex items-center justify-between text-xs text-zinc-500">
-                <div>
-                  <p>Condition: {listing.condition}</p>
-                  <p>{listing.vendor}</p>
-                </div>
-                <Badge variant="secondary">{listing.university}</Badge>
-              </div>
-              <div className="mt-4">
-                <Button size="sm" variant="outline" className="w-full">View Details</Button>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 text-center">
-          <Button variant="outline">View All Listings</Button>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="mb-12 bg-zinc-50 p-8 rounded-xl">
-        <h2 className="text-2xl font-bold mb-6 text-center">How UniVendors Works</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
-            <h3 className="text-lg font-semibold mb-2">Register as a Vendor</h3>
-            <p className="text-sm text-zinc-600">Create your vendor profile with your university, location, and what you're selling.</p>
+              ) : (
+                <Button asChild>
+                  <Link href="/uni-vendors/products/create">List a Product</Link>
+                </Button>
+              )
+            ) : (
+              <Button asChild>
+                <Link href="/signin">Sign In to Sell</Link>
+              </Button>
+            )}
           </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
-            <h3 className="text-lg font-semibold mb-2">List Your Products</h3>
-            <p className="text-sm text-zinc-600">Add your textbooks, stationery, food items, or services with prices and details.</p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
-            <h3 className="text-lg font-semibold mb-2">Connect & Sell</h3>
-            <p className="text-sm text-zinc-600">Receive inquiries from interested students and arrange meetups on campus.</p>
-          </div>
-        </div>
-      </section>
 
-      {/* Testimonials */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-center">From Student Vendors</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white border rounded-xl p-6 shadow-sm">
-            <p className="italic text-zinc-600 mb-4">
-              "UniVendors has been a game-changer for me. I started selling my old textbooks to make extra money,
-              and now I have a thriving stationery business that helps pay for my tuition."
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                <span className="font-bold text-emerald-700">SN</span>
+          <TabsContent value="services" className="space-y-6 mt-0">
+            {isLoading ? (
+              <div className="text-center py-10">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+                <p className="mt-2 text-muted-foreground">Loading services...</p>
+              </div>
+            ) : filteredServices.length === 0 ? (
+              <Card className="glass-card">
+                <CardContent className="text-center py-10">
+                  <h3 className="text-lg font-semibold mb-2">No services found</h3>
+                  <p className="text-muted-foreground mb-6">Try adjusting your search or filters</p>
+                  {user && (
+                    <Button asChild>
+                      <Link href="/uni-vendors/services/create">Offer First Service</Link>
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredServices.map((service) => (
+                  <Card key={service.id} className="glass-card h-full flex flex-col">
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start mb-2">
+                        <CardTitle className="text-lg">{service.title}</CardTitle>
+                        <Badge className="bg-primary/80 hover:bg-primary">R{service.price}</Badge>
+                      </div>
+                      <CardDescription>{service.category} • {service.location}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                      {service.description && (
+                        <p className="text-sm mb-3 line-clamp-2">{service.description}</p>
+                      )}
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {service.tags && service.tags.map((tag, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">{tag}</Badge>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2 mt-3">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src={service.profiles?.image || '/placeholder-user.png'} />
+                          <AvatarFallback>{service.profiles?.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                        </Avatar>
+                        <div className="text-sm text-muted-foreground">
+                          <span>{service.profiles?.name}</span>
+                          <span className="mx-1">•</span>
+                          <span>{formatDate(service.created_at)}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="pt-0">
+                      <Button className="w-full" asChild>
+                        <Link href={`/uni-vendors/services/${service.id}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {filteredServices.length > 0 && filteredServices.length < services.length && (
+              <div className="text-center mt-4">
+                <p className="text-muted-foreground">
+                  Showing {filteredServices.length} of {services.length} services
+                </p>
+              </div>
+            )}
+
+            {services.length > 9 && (
+              <div className="flex justify-center mt-8">
+                <Button variant="outline" asChild>
+                  <Link href="/uni-vendors/services">View All Services</Link>
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="products" className="space-y-6 mt-0">
+            {isLoading ? (
+              <div className="text-center py-10">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+                <p className="mt-2 text-muted-foreground">Loading products...</p>
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <Card className="glass-card">
+                <CardContent className="text-center py-10">
+                  <h3 className="text-lg font-semibold mb-2">No products found</h3>
+                  <p className="text-muted-foreground mb-6">Try adjusting your search or filters</p>
+                  {user && (
+                    <Button asChild>
+                      <Link href="/uni-vendors/products/create">List First Product</Link>
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProducts.map((product) => (
+                  <Card key={product.id} className="glass-card h-full flex flex-col">
+                    <div className="relative pt-[60%] overflow-hidden rounded-t-lg">
+                      <img 
+                        src={product.image_url || '/placeholder-product.png'} 
+                        alt={product.title}
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                      />
+                    </div>
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start mb-2">
+                        <CardTitle className="text-lg">{product.title}</CardTitle>
+                        <Badge className="bg-primary/80 hover:bg-primary">R{product.price}</Badge>
+                      </div>
+                      <CardDescription>{product.category} • {product.location}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                      {product.description && (
+                        <p className="text-sm mb-3 line-clamp-2">{product.description}</p>
+                      )}
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {product.tags && product.tags.map((tag, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">{tag}</Badge>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2 mt-3">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src={product.profiles?.image || '/placeholder-user.png'} />
+                          <AvatarFallback>{product.profiles?.name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                        </Avatar>
+                        <div className="text-sm text-muted-foreground">
+                          <span>{product.profiles?.name}</span>
+                          <span className="mx-1">•</span>
+                          <span>{formatDate(product.created_at)}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="pt-0">
+                      <Button className="w-full" asChild>
+                        <Link href={`/uni-vendors/products/${product.id}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {filteredProducts.length > 0 && filteredProducts.length < products.length && (
+              <div className="text-center mt-4">
+                <p className="text-muted-foreground">
+                  Showing {filteredProducts.length} of {products.length} products
+                </p>
+              </div>
+            )}
+
+            {products.length > 9 && (
+              <div className="flex justify-center mt-8">
+                <Button variant="outline" asChild>
+                  <Link href="/uni-vendors/products">View All Products</Link>
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        <div className="mt-14">
+          <Card className="glass-card p-6 max-w-3xl mx-auto">
+            <CardHeader>
+              <CardTitle>UniVendor Community Guidelines</CardTitle>
+              <CardDescription>
+                Our marketplace is built on trust, fairness, and supporting fellow students
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-left">
+              <div>
+                <h3 className="font-medium">✅ Do's</h3>
+                <ul className="list-disc pl-5 text-muted-foreground text-sm mt-1">
+                  <li>Offer services and products at fair prices</li>
+                  <li>Provide accurate descriptions and images</li>
+                  <li>Respond promptly to inquiries</li>
+                  <li>Meet in safe, public locations for exchanges</li>
+                  <li>Report any suspicious activity to moderators</li>
+                </ul>
               </div>
               <div>
-                <p className="font-medium">Sipho N.</p>
-                <p className="text-xs text-zinc-500">3rd Year, University of Cape Town</p>
+                <h3 className="font-medium">❌ Don'ts</h3>
+                <ul className="list-disc pl-5 text-muted-foreground text-sm mt-1">
+                  <li>Sell prohibited or illegal items</li>
+                  <li>Misrepresent your services or products</li>
+                  <li>Engage in academic dishonesty (e.g., writing assignments for others)</li>
+                  <li>Share personal information publicly</li>
+                  <li>Create multiple listings for the same item</li>
+                </ul>
               </div>
-            </div>
-          </div>
-
-          <div className="bg-white border rounded-xl p-6 shadow-sm">
-            <p className="italic text-zinc-600 mb-4">
-              "As a student from a rural area, I struggled with finances. Now I sell homemade snacks on campus
-              through UniVendors and earn enough to cover my accommodation and data costs."
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="font-bold text-purple-700">TM</span>
-              </div>
-              <div>
-                <p className="font-medium">Thandi M.</p>
-                <p className="text-xs text-zinc-500">2nd Year, University of Johannesburg</p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-8 rounded-xl text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">Start Your Student Business Today</h2>
-        <p className="text-lg mb-6 max-w-2xl mx-auto">
-          Turn your skills and resources into income while helping fellow students access affordable products and services.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Button size="lg" className="bg-white text-emerald-700 hover:bg-white/90">
-            <Link href="/uni-vendors/create">
-              Become a UniVendor
-            </Link>
-          </Button>
-          <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
-            <Link href="/uni-vendors/browse">
-              Browse Student Businesses
-            </Link>
-          </Button>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }
