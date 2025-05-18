@@ -25,6 +25,7 @@ const nextConfig = {
       },
     },
   },
+  allowedDevOrigins: ['3001-idx-unifriend-1744290562446.cluster-blu4edcrfnajktuztkjzgyvzek.cloudworkstations.dev'],
 }
 
 module.exports = nextConfig
