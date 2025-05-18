@@ -15,7 +15,7 @@ const Sidebar = () => {
   return (
     <div className="fixed left-0 top-0 h-screen w-64 bg-gray-100 border-r border-gray-200 flex flex-col">
       <div className="p-4 flex justify-center">
-        <Link href="/">
+        <Link href="/" className="inline-block">
           <Image
             src="/images/unifriend.png"
             alt="UniConnect Logo"
