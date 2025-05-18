@@ -176,7 +176,7 @@ export default function TextbookDetailPage({ params }: { params: { id: string } 
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <Button variant="outline" size="sm" asChild className="mb-4">
-            <Link href="/unishare?tab=textbooks">
+            <Link href="/unishare?tab=textbooks" legacyBehavior>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -424,7 +424,10 @@ export default function TextbookDetailPage({ params }: { params: { id: string } 
                           </div>
                         )}
                         <div>
-                          <Link href={`/unishare/textbooks/${related.id}`} className="hover:underline">
+                          <Link
+                            href={`/unishare/textbooks/${related.id}`}
+                            className="hover:underline"
+                            legacyBehavior>
                             <h3 className="font-semibold text-sm">{related.title}</h3>
                           </Link>
                           <p className="text-xs text-muted-foreground">By {related.author}</p>

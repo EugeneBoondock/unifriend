@@ -163,7 +163,7 @@ export default function CreateServicePage() {
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
           <Button variant="outline" size="sm" asChild className="mb-4">
-            <Link href="/uni-vendors">
+            <Link href="/uni-vendors" legacyBehavior>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>

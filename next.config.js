@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable React strict mode for development
+  reactStrictMode: true,
+  
+  // Configure images
   images: {
     remotePatterns: [
       {
@@ -11,17 +15,41 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     formats: ['image/webp'],
   },
-  webpack: (config) => {
+  
+  // Webpack configuration
+  webpack: (config, { isServer }) => {
+    // Add path alias
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': __dirname,
     };
+    
+    // Handle CSS modules
+    const cssRules = config.module.rules
+      .find(rule => typeof rule.oneOf === 'object')
+      .oneOf.filter(rule => Array.isArray(rule.use));
+    
+    // Find and update the CSS rule
+    cssRules.forEach(rule => {
+      rule.use.forEach(module => {
+        if (module.loader && module.loader.includes('css-loader') && !module.loader.includes('postcss-loader')) {
+          module.options = {
+            ...module.options,
+            importLoaders: 1,
+            modules: false, // Disable CSS modules for global CSS
+          };
+        }
+      });
+    });
+    
     return config;
   },
+  
+  // Enable experimental features
   experimental: {
     turbo: {
       rules: {
-        // Configure any specific rules for Turbopack
+        // Configure Turbopack rules here
       },
     },
   },

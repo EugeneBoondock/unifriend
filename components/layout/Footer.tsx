@@ -12,7 +12,7 @@ export function Footer({ className }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <img src="/logo.png" alt="UniFriend Logo" className="h-8 w-auto" />
+              <img src="/images/unifriend.png" alt="UniFriend Logo" className="h-8 w-auto" />
               <span className="font-bold">UniFriend</span>
             </div>
             <p className="text-sm text-muted-foreground">

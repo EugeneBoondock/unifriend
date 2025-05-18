@@ -51,7 +51,10 @@ export function Navbar() {
       <div className="container flex h-16 items-center">
         {/* Mobile logo and hamburger */}
         <div className="flex items-center justify-between md:hidden w-full">
-          <Link href="/" className="flex items-center transition-all duration-200 hover:scale-105">
+          <Link
+            href="/"
+            className="flex items-center transition-all duration-200 hover:scale-105"
+            legacyBehavior>
             <Image
               src="/images/unifriend.png"
               alt="Unifriend Logo"
@@ -98,7 +101,7 @@ export function Navbar() {
                         "text-lg font-medium transition-colors hover:text-primary",
                         pathname === route.path && "text-primary font-bold"
                       )}
-                    >
+                      legacyBehavior>
                       <div className="flex items-center">
                         {route.name}
                       </div>
@@ -115,7 +118,7 @@ export function Navbar() {
                           href={item.path}
                           onClick={() => setIsOpen(false)}
                           className="text-base hover:text-primary"
-                        >
+                          legacyBehavior>
                           {item.name}
                         </Link>
                       ))}
@@ -132,7 +135,7 @@ export function Navbar() {
                           href={item.path}
                           onClick={() => setIsOpen(false)}
                           className="text-base hover:text-primary"
-                        >
+                          legacyBehavior>
                           <div className="flex items-center">
                             {item.name}
                             {item.isNew && (
@@ -155,7 +158,7 @@ export function Navbar() {
                         href="/signin"
                         onClick={() => setIsOpen(false)}
                         className="w-full"
-                      >
+                        legacyBehavior>
                         <Button variant="outline" className="w-full">
                           Sign In
                         </Button>
@@ -164,7 +167,7 @@ export function Navbar() {
                         href="/signup"
                         onClick={() => setIsOpen(false)}
                         className="w-full"
-                      >
+                        legacyBehavior>
                         <Button className="w-full">
                           Sign Up
                         </Button>
@@ -179,7 +182,10 @@ export function Navbar() {
 
         {/* Desktop logo */}
         <div className="mr-4 hidden md:flex">
-          <Link href="/" className="flex items-center transition-all duration-200 hover:scale-105">
+          <Link
+            href="/"
+            className="flex items-center transition-all duration-200 hover:scale-105"
+            legacyBehavior>
             <Image
               src="/images/unifriend.png"
               alt="Unifriend Logo"
@@ -211,7 +217,7 @@ export function Navbar() {
                                   <Link
                                     className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-brand-purple to-[#3a2a49] p-6 no-underline outline-none focus:shadow-md"
                                     href={item.path}
-                                  >
+                                    legacyBehavior>
                                     <div className="mt-4 mb-2 text-lg font-medium text-white">
                                       {item.name}
                                     </div>
@@ -278,12 +284,12 @@ export function Navbar() {
 
         {/* Desktop right section */}
         <div className="hidden md:flex items-center space-x-4 ml-auto">
-          <Link href="/signin">
+          <Link href="/signin" legacyBehavior>
             <Button variant="outline" size="sm">
               Sign In
             </Button>
           </Link>
-          <Link href="/signup">
+          <Link href="/signup" legacyBehavior>
             <Button size="sm">Get Started</Button>
           </Link>
         </div>

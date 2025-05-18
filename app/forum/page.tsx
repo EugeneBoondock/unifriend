@@ -256,7 +256,7 @@ function ForumPostCard({ post }: { post: any }) {
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <Link href={`/forum/${post.id}`} className="hover:underline">
+            <Link href={`/forum/${post.id}`} className="hover:underline" legacyBehavior>
               <h3 className="font-medium text-lg">{post.title}</h3>
             </Link>
             <p className="text-sm text-muted-foreground line-clamp-2">

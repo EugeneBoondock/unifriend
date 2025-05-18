@@ -101,22 +101,20 @@ const ProtestEvent: React.FC<ProtestEventProps> = ({ event }) => {
           {/* TODO: Implement the logic to check if the user is a participant */}
           {true ? (
             // Display leave button if the user is a participant
-            <Button
+            (<Button
               variant="destructive"
               size="sm"
               onClick={handleJoinOrLeave}
-            >
-              Leave
-            </Button>
+            >Leave
+                          </Button>)
           ) : (
             // Display join button if the user is not a participant
-            <Button
+            (<Button
               variant="default"
               size="sm"
               onClick={handleJoinOrLeave}
-            >
-              Join
-            </Button>
+            >Join
+                          </Button>)
           )}
         </div>
         {/* TODO: if the user is the organizer add a button to edit the event */}

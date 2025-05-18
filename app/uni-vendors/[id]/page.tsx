@@ -101,14 +101,16 @@ export default function VendorDetailPage({ params }: Props) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <Link href="/uni-vendors" className="text-violet-600 hover:underline flex items-center gap-1">
+        <Link
+          href="/uni-vendors"
+          className="text-violet-600 hover:underline flex items-center gap-1"
+          legacyBehavior>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
           Back to all vendors
         </Link>
       </div>
-
       <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div>
@@ -193,7 +195,6 @@ export default function VendorDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
-
       <Tabs defaultValue="products" className="mb-8">
         <TabsList className="mb-6">
           <TabsTrigger value="products">Available Products</TabsTrigger>

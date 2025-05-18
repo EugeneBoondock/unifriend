@@ -253,7 +253,7 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <Button variant="outline" size="sm" asChild className="mb-4">
-            <Link href="/uni-vendors">
+            <Link href="/uni-vendors" legacyBehavior>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -570,7 +570,10 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
                 ) : (
                   relatedServices.map((related) => (
                     <div key={related.id} className="border-b pb-3 last:border-0 last:pb-0">
-                      <Link href={`/uni-vendors/services/${related.id}`} className="hover:underline">
+                      <Link
+                        href={`/uni-vendors/services/${related.id}`}
+                        className="hover:underline"
+                        legacyBehavior>
                         <h3 className="font-semibold text-sm">{related.title}</h3>
                       </Link>
                       <p className="text-xs text-muted-foreground">{related.category}</p>
@@ -594,7 +597,7 @@ export default function ServiceDetailPage({ params }: { params: { id: string } }
               </CardContent>
               <CardFooter>
                 <Button variant="outline" className="w-full" size="sm" asChild>
-                  <Link href={`/uni-vendors?category=${service.category}`}>
+                  <Link href={`/uni-vendors?category=${service.category}`} legacyBehavior>
                     More {service.category} Services
                   </Link>
                 </Button>

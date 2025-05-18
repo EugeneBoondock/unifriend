@@ -1631,7 +1631,7 @@ export default function EmploymentRecommendationsPage() {
                       </Link>
                     </Button>
                     <Button asChild>
-                      <Link href="/employment-recommendations/resume/edit">
+                      <Link href="/employment-recommendations/resume/edit" legacyBehavior>
                         {userResume ? 'Edit Resume' : 'Create Resume'}
                       </Link>
                     </Button>

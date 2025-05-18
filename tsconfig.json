@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": [],
     "target": "es2015",
     "lib": [
       "dom",

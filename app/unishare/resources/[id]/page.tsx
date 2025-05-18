@@ -271,7 +271,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <Button variant="outline" size="sm" asChild className="mb-4">
-            <Link href="/unishare">
+            <Link href="/unishare" legacyBehavior>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -488,7 +488,10 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
                 ) : (
                   relatedResources.map((related) => (
                     <div key={related.id} className="border-b pb-3 last:border-0 last:pb-0">
-                      <Link href={`/unishare/resources/${related.id}`} className="block hover:underline">
+                      <Link
+                        href={`/unishare/resources/${related.id}`}
+                        className="block hover:underline"
+                        legacyBehavior>
                         <h3 className="font-semibold text-sm">{related.title}</h3>
                       </Link>
                       <div className="flex items-center gap-2 mt-1">
@@ -501,7 +504,7 @@ export default function ResourceDetailPage({ params }: { params: { id: string } 
               </CardContent>
               <CardFooter>
                 <Button variant="outline" className="w-full" size="sm" asChild>
-                  <Link href={`/unishare?subject=${resource.subject}`}>
+                  <Link href={`/unishare?subject=${resource.subject}`} legacyBehavior>
                     More {resource.subject} Resources
                   </Link>
                 </Button>

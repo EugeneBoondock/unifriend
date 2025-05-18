@@ -209,7 +209,7 @@ export default function ManageAdsPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="mb-6">
           <Button variant="outline" size="sm" asChild className="mb-4">
-            <Link href="/business-ads">
+            <Link href="/business-ads" legacyBehavior>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -226,7 +226,7 @@ export default function ManageAdsPage() {
             </p>
           </div>
           <Button asChild>
-            <Link href="/business-ads/create">
+            <Link href="/business-ads/create" legacyBehavior>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
@@ -409,7 +409,6 @@ export default function ManageAdsPage() {
           </CardContent>
         </Card>
       </div>
-      
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>

@@ -47,6 +47,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.7",
+    "@tailwindcss/postcss7-compat": "^2.2.17",
     "@types/autoprefixer": "^10.2.4",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.17.47",
@@ -56,10 +58,10 @@
     "bcrypt": "^5.1.1",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
-    "postcss": "^8.4.35",
-    "postcss-import": "^15.1.0",
+    "postcss": "^8.5.3",
+    "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.1",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^4.1.7",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
   }

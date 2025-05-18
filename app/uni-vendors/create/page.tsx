@@ -151,13 +151,15 @@ export default function CreateVendorPage() {
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-12">
-      <Link href="/uni-vendors" className="flex items-center text-sm text-zinc-500 mb-8 hover:text-zinc-800">
+      <Link
+        href="/uni-vendors"
+        className="flex items-center text-sm text-zinc-500 mb-8 hover:text-zinc-800"
+        legacyBehavior>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
         Back to UniVendors
       </Link>
-
       <Card>
         <CardHeader className="text-center border-b pb-8">
           <div className="flex justify-center mb-4">
@@ -544,7 +546,6 @@ export default function CreateVendorPage() {
           )}
         </CardContent>
       </Card>
-
       <div className="mt-10 border-t pt-6">
         <h3 className="font-semibold mb-4">About UniVendors</h3>
         <p className="text-sm text-zinc-600 mb-4">

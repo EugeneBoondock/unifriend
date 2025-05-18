@@ -1,39 +1,43 @@
-/* Meerkat Theme Styles */
+/* Meerkat Theme CSS Variables */
 :root {
-  --primary: #f59e0b;
-  --primary-foreground: #ffffff;
-  --secondary: #10b981;
-  --secondary-foreground: #ffffff;
-  --accent: #8b5cf6;
-  --accent-foreground: #ffffff;
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --card: rgba(255, 255, 255, 0.8);
-  --card-foreground: #0f172a;
-  --popover: rgba(255, 255, 255, 0.9);
-  --popover-foreground: #0f172a;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #f59e0b;
+  /* Meerkat pattern background - playful and visible */
+  --meerkat-pattern-light: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40,40 Q55,20 80,40' fill='none' stroke='%23f59e0b30' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M40,80 Q55,60 80,80' fill='none' stroke='%23f59e0b30' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='30' r='3' fill='%23f59e0b30'/%3E%3Ccircle cx='70' cy='30' r='3' fill='%23f59e0b30'/%3E%3Cpath d='M50,50 Q60,35 70,50' fill='none' stroke='%23f59e0b30' stroke-width='2' opacity='0.8'/%3E%3C/svg%3E");
+  --meerkat-pattern-dark: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40,40 Q55,20 80,40' fill='none' stroke='%23f59e0b60' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M40,80 Q55,60 80,80' fill='none' stroke='%23f59e0b60' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='30' r='3' fill='%23f59e0b60'/%3E%3Ccircle cx='70' cy='30' r='3' fill='%23f59e0b60'/%3E%3Cpath d='M50,50 Q60,35 70,50' fill='none' stroke='%23f59e0b60' stroke-width='2' opacity='0.8'/%3E%3C/svg%3E");
+  
+  --primary: 245 158 11;
+  --primary-foreground: 255 255 255;
+  --secondary: 16 185 129;
+  --secondary-foreground: 255 255 255;
+  --accent: 139 92 246;
+  --accent-foreground: 255 255 255;
+  --background: 255 255 255;
+  --foreground: 15 23 42;
+  --card: 255 255 255 / 0.8;
+  --card-foreground: 15 23 42;
+  --popover: 255 255 255 / 0.9;
+  --popover-foreground: 15 23 42;
+  --border: 226 232 240;
+  --input: 226 232 240;
+  --ring: 245 158 11;
   --radius: 0.5rem;
 }
 
 .dark {
-  --primary: #f59e0b;
-  --primary-foreground: #ffffff;
-  --secondary: #10b981;
-  --secondary-foreground: #ffffff;
-  --accent: #8b5cf6;
-  --accent-foreground: #ffffff;
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --card: rgba(15, 23, 42, 0.8);
-  --card-foreground: #f8fafc;
-  --popover: rgba(15, 23, 42, 0.9);
-  --popover-foreground: #f8fafc;
-  --border: #1e293b;
-  --input: #1e293b;
-  --ring: #f59e0b;
+  --primary: 245 158 11;
+  --primary-foreground: 255 255 255;
+  --secondary: 16 185 129;
+  --secondary-foreground: 255 255 255;
+  --accent: 139 92 246;
+  --accent-foreground: 255 255 255;
+  --background: 15 23 42;
+  --foreground: 248 250 252;
+  --card: 15 23 42 / 0.8;
+  --card-foreground: 248 250 252;
+  --popover: 15 23 42 / 0.9;
+  --popover-foreground: 248 250 252;
+  --border: 30 41 59;
+  --input: 30 41 59;
+  --ring: 245 158 11;
 }
 
 /* Glass Card Effect */

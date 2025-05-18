@@ -134,7 +134,6 @@ export default function MentorshipPage() {
           share valuable insights, and help you navigate university life.
         </p>
       </div>
-
       <div className="flex flex-col md:flex-row gap-8 mb-12">
         <div className="w-full md:w-2/3">
           <div className="bg-gradient-to-r from-violet-100 to-violet-50 p-8 rounded-xl mb-8">
@@ -290,7 +289,7 @@ export default function MentorshipPage() {
                   key={index}
                   href={`/mentorship?category=${category.name.toLowerCase().replace(/\s+/g, '-')}`}
                   className="block"
-                >
+                  legacyBehavior>
                   <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-start gap-3">
                       <div className="text-2xl">{category.icon}</div>
@@ -342,7 +341,6 @@ export default function MentorshipPage() {
           </Card>
         </div>
       </div>
-
       <div className="bg-blue-50 p-8 rounded-xl mb-16">
         <h2 className="text-2xl font-bold mb-6 text-center">What Students Say About Mentorship</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -410,7 +408,6 @@ export default function MentorshipPage() {
           </Card>
         </div>
       </div>
-
       <div className="bg-violet-600 text-white p-8 rounded-xl text-center">
         <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
         <p className="mb-6 max-w-2xl mx-auto">
