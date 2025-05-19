@@ -6,8 +6,8 @@ interface ClassNotesRequestProps {
   title: string;
   description: string;
   course: string;
-  userName: string;
-  userImage?: string;
+  userName?: string | null;
+  userImage?: string | null;
 }
 
 const ClassNotesRequest: React.FC<ClassNotesRequestProps> = ({
@@ -17,18 +17,24 @@ const ClassNotesRequest: React.FC<ClassNotesRequestProps> = ({
   userName,
   userImage,
 }) => {
+  const userInitials = userName 
+    ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : '??';
+
   return (
     <Card>
       <CardHeader className="flex-row items-center space-x-4">
         <Avatar>
           {userImage ? (
-            <AvatarImage src={userImage} alt={userName} />
+            <AvatarImage src={userImage} alt={userName || 'User'} />
           ) : (
-            <AvatarFallback>{userName.slice(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{userInitials}</AvatarFallback>
           )}
         </Avatar>
         <div className="space-y-1">
-          <CardTitle className="text-sm font-medium leading-none">{userName}</CardTitle>
+          <CardTitle className="text-sm font-medium leading-none">
+            {userName || 'Unknown User'}
+          </CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">

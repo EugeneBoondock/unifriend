@@ -1,72 +1,150 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { PrismaClient } from '@prisma/client';
+import { authOptions } from '../auth/auth.config';
+import { prisma } from '@/lib/db';
 
-const prisma = new PrismaClient();
+export async function GET(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const session = await getServerSession(req, res, authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
 
-  if (!session) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: {
+        id: true,
+        course: true,
+        university: true,
+        yearOfStudy: true
+      },
+    });
 
-  if (req.method === 'GET') {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { id: session.user.id },
-      });
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
 
-      if (user?.course && user?.university && user?.yearOfStudy) {
-        const ads = await prisma.ads.findMany({
-          where: {
-            OR: [
-              { targetedCourses: { has: user.course } },
-              { targetedUniversities: { has: user.university } },
-              { targetedYearOfStudies: { has: user.yearOfStudy } },
-            ],
-          },
-        });
-        res.status(200).json(ads);
-      } else {
-        const ads = await prisma.ads.findMany();
-        res.status(200).json(ads);
+    let ads;
+    if (user.course || user.university || user.yearOfStudy) {
+      const conditions = [];
+      
+      if (user.course) {
+        conditions.push({ course: user.course });
       }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  } else if (req.method === 'POST') {
-    const { title, description, imageUrl, university, course, targetedCourses, targetedUniversities, targetedYearOfStudies } = req.body;
-      res.status(200).json(ads);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  } else if (req.method === 'POST') {
-    const { title, description, imageUrl, university, course } = req.body;
-    
-    try{
-      const newAd = await prisma.ads.create({
-        data: {
-          title,
-          description,
-          imageUrl,
-          university,
-          course,
-          targetedCourses: targetedCourses || [],
-          targetedUniversities: targetedUniversities || [],
-          targetedYearOfStudies: targetedYearOfStudies || [],
-          authorId: session.user.id,
+      if (user.university) {
+        conditions.push({ university: user.university });
+      }
+      
+      ads = await prisma.ads.findMany({
+        where: {
+          OR: conditions.length > 0 ? conditions : undefined
         },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
       });
-      res.status(201).json(newAd);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
+    } else {
+      // If user doesn't have profile info, show all ads
+      ads = await prisma.ads.findMany({
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
     }
-  } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
+    
+    return NextResponse.json(ads);
+  } catch (error) {
+    console.error('Error fetching ads:', error);
+    return NextResponse.json(
+      { message: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true }
+    });
+
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    const body = await req.json();
+    const { 
+      title, 
+      description, 
+      imageUrl, 
+      university, 
+      course
+    } = body;
+
+    if (!title || !description) {
+      return NextResponse.json(
+        { message: 'Title and description are required' },
+        { status: 400 }
+      );
+    }
+    
+    const newAd = await prisma.ads.create({
+      data: {
+        title,
+        description,
+        imageUrl: imageUrl || null,
+        university: university || null,
+        course: course || null,
+        authorId: user.id,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true
+          }
+        }
+      }
+    });
+    
+    return NextResponse.json(newAd, { status: 201 });
+  } catch (error) {
+    console.error('Error creating ad:', error);
+    return NextResponse.json(
+      { message: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

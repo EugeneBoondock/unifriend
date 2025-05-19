@@ -1,13 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  ClassNotesRequestList,
-  CreateClassNotesRequestForm,
-  LectureRecordingList,
-    CreateLectureRecordingForm,
-  CatchUpMaterialList,
-  CreateCatchUpMaterialForm,
-} from "../../components/catchup";
+import ClassNotesRequestList from "@/components/catchup/ClassNotesRequestList";
+import CreateClassNotesRequestForm from "@/components/catchup/CreateClassNotesRequestForm";
+import LectureRecordingList from "@/components/catchup/LectureRecordingList";
+import CreateLectureRecordingForm from "@/components/catchup/CreateLectureRecordingForm";
+import CatchUpMaterialList from "@/components/catchup/CatchUpMaterialList";
+import CreateCatchUpMaterialForm from "@/components/catchup/CreateCatchUpMaterialForm";
 
 export interface ClassNotesRequest {
   id: string;
