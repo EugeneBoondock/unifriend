@@ -52,6 +52,7 @@
     "@eslint/eslintrc": "^3",
     "@types/autoprefixer": "^10.2.4",
     "@types/bcrypt": "^5.0.2",
+    "@types/next-auth": "^3.13.0",
     "@types/node": "^20.17.47",
     "@types/react": "^18.3.21",
     "@types/react-dom": "^18.3.7",
