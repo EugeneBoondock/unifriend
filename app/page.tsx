@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/components/auth/AuthContext';
 import { MainNav } from '@/components/layout/MainNav';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                Your Ultimate University Companion
+                Your Ultimate Student Companion
               </h1>
               <p className="text-xl text-muted-foreground">
                 Connect with fellow students, access resources, track applications, and navigate university life with ease.
@@ -52,14 +53,14 @@ export default function HomePage() {
                 )}
               </div>
             </div>
-            <div className="hidden md:block">
-              <img 
-                src="/images/hero-illustration.svg" 
-                alt="Students collaborating" 
-                className="w-full h-auto rounded-lg shadow-xl"
-                onError={(e) => {
-                  e.currentTarget.src = "https://placehold.co/600x400/e2e8f0/64748b?text=UniFriend";
-                }}
+            <div className="relative w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="/images/Unfriend_main.jpg"
+                alt="Students collaborating and studying together"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>
@@ -139,9 +140,9 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="bg-primary text-primary-foreground py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Transform Your University Experience?</h2>
+          <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Student Experience?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Join thousands of South African students already using UniFriend to navigate university life with confidence.
+            Join thousands of South African students already using UniFriend to navigate student life with confidence.
           </p>
           {!loading && !user ? (
             <Button size="lg" variant="secondary" asChild>
@@ -158,23 +159,28 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-background border-t py-12">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <img src="/logo.png" alt="UniFriend Logo" className="h-8 w-auto" />
-                <span className="font-bold">UniFriend</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Your ultimate companion for navigating university life in South Africa.
-              </p>
+          <div className="flex flex-col items-center justify-center text-center mb-8">
+            <div className="flex items-center space-x-2 mb-4">
+              <Image 
+                src="/images/unifriend.png" 
+                alt="UniFriend Logo" 
+                width={150} 
+                height={50} 
+                className="h-8 w-auto" 
+              />
+              <span className="font-bold text-xl">UniFriend</span>
             </div>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Your ultimate companion for navigating student life.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
             <div>
               <h3 className="font-medium mb-4">Platform</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/resources" className="text-muted-foreground hover:text-foreground">Resources</Link></li>
                 <li><Link href="/forum" className="text-muted-foreground hover:text-foreground">Forum</Link></li>
                 <li><Link href="/events" className="text-muted-foreground hover:text-foreground">Events</Link></li>
-                <li><Link href="/mentorship" className="text-muted-foreground hover:text-foreground">Mentorship</Link></li>
               </ul>
             </div>
             <div>
@@ -183,15 +189,13 @@ export default function HomePage() {
                 <li><Link href="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
                 <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact Us</Link></li>
                 <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQs</Link></li>
-                <li><Link href="/feedback" className="text-muted-foreground hover:text-foreground">Feedback</Link></li>
               </ul>
             </div>
-            <div>
+            <div className="col-span-2 md:col-span-1">
               <h3 className="font-medium mb-4">Legal</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
                 <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
-                <li><Link href="/cookies" className="text-muted-foreground hover:text-foreground">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>

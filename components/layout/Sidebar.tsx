@@ -18,7 +18,7 @@ const Sidebar = () => {
         <Link href="/" className="inline-block">
           <Image
             src="/images/unifriend.png"
-            alt="UniConnect Logo"
+            alt="UniFriend Logo"
             width={150}
             height={50}
             className="object-contain"

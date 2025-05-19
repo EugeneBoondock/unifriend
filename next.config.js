@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+});
+
+const nextConfig = withPWA({
   // Enable React strict mode for development
   reactStrictMode: true,
   
@@ -54,6 +61,6 @@ const nextConfig = {
     },
   },
   allowedDevOrigins: ['3001-idx-unifriend-1744290562446.cluster-blu4edcrfnajktuztkjzgyvzek.cloudworkstations.dev'],
-}
+});
 
 module.exports = nextConfig

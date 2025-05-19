@@ -16,7 +16,7 @@ export function Footer({ className }: FooterProps) {
               <span className="font-bold">UniFriend</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Your ultimate companion for navigating university life in South Africa.
+              Your ultimate companion for navigating student life.
             </p>
           </div>
           <div>

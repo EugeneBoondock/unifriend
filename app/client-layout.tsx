@@ -10,6 +10,10 @@ import Sidebar from '../components/layout/Sidebar';
 import { AuthProvider } from './providers/AuthProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { RouteGuard } from '@/components/auth/RouteGuard';
+import dynamic from 'next/dynamic';
+
+// Dynamically import PWA component with no SSR
+const PWA = dynamic(() => import('@/components/PWA'), { ssr: false });
 
 export default function ClientLayout({
   children,
@@ -40,9 +44,12 @@ export default function ClientLayout({
     };
   }, [supabase]);
 
-  // Handle redirects
+  // Handle redirects - only redirect to signin if not on a public route
   useEffect(() => {
-    if (mounted && !session && pathname !== '/signin' && pathname !== '/signup') {
+    const publicRoutes = ['/', '/signin', '/signup', '/about', '/contact'];
+    const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/auth/');
+    
+    if (mounted && !session && !isPublicRoute) {
       router.push('/signin');
     }
   }, [session, pathname, router, mounted]);
@@ -57,17 +64,20 @@ export default function ClientLayout({
   }
 
   return (
-    <AuthProvider>
-      <ThemeProvider>
+    <ThemeProvider>
+      <AuthProvider>
         <RouteGuard>
           <div className="flex min-h-screen w-full">
             {session && <Sidebar />}
             <main className={`flex-1 transition-all duration-200 ${session ? 'md:ml-64' : ''} w-full`}>
-              <PageLayout>{children}</PageLayout>
+              <PageLayout>
+                {children}
+                <PWA />
+              </PageLayout>
             </main>
           </div>
         </RouteGuard>
-      </ThemeProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { MainNav } from './MainNav';
-import { Footer } from './Footer';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -21,7 +20,6 @@ export function PageLayout({ children }: PageLayoutProps) {
           {children}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

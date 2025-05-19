@@ -219,7 +219,7 @@ export default function ApplicationsPage() {
             <div className="bg-blue-50 p-6 rounded-xl mt-8">
               <h3 className="text-xl font-bold mb-2">Required Documents</h3>
               <ul className="list-disc pl-6 space-y-2">
-                <li>South African ID document or passport</li>
+                <li>ID document or passport</li>
                 <li>National Senior Certificate or equivalent qualification</li>
                 <li>Academic records/transcripts from Grade 11 and 12</li>
                 <li>Proof of payment of application fee</li>
