@@ -402,4 +402,3 @@ model Like {
   @@index([postId])
   @@index([commentId])
 }
->>>>>>> master
